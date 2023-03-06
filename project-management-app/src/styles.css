@@ -1,0 +1,1 @@
+@tailwind base;@tailwind components;@tailwind utilities;html,body{height:100%}body{margin:0;padding:0;font-family:Roboto,"Helvetica Neue",sans-serif}mat-radio-button label{cursor:pointer;font-size:1rem}app-root{display:flex;flex-direction:column;min-height:100%}app-root main{flex:1 1 auto;height:0}.snack-bar{margin-top:90px !important}

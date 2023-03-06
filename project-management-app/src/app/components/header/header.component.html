@@ -1,0 +1,38 @@
+<mat-toolbar color="primary" class="justify-between items-center h-20">
+    <a mat-button [routerLink]="['/']" class="text-2xl">PMA</a>
+    <div class="flex items-center gap-3">
+        <mat-button-toggle-group class="lang h-9 text-sm items-center" name="lang" aria-label="Choose language">
+            <mat-button-toggle
+                [checked]="lang === translate.currentLang"
+                (click)="app.setLanguage(i)"
+                *ngFor="let lang of app.langList; let i = index"
+                [value]="i"
+                >{{ lang | uppercase }}
+            </mat-button-toggle>
+        </mat-button-toggle-group>
+        <button mat-button *ngIf="!app.isLoggedIn" (click)="app.openSignUpPage()" class="signup">{{ 'HEADER.BUTTON.SIGNUP' | translate }}</button>
+        <button mat-raised-button *ngIf="!app.isLoggedIn" (click)="auth()" class="login" color="accent">{{ 'HEADER.BUTTON.LOGIN' | translate }}</button>
+        <!-- <mat-menu #langMenu>
+            <mat-radio-group aria-label="Choose language">
+                <button mat-menu-item (click)="appSetLanguage(i)" *ngFor="let lang of langList; let i = index" [value]="i">
+                    <mat-radio-button [checked]="lang.value === currentLanguage" [value]="i">{{ lang.name }}</mat-radio-button>
+                </button>
+            </mat-radio-group>
+        </mat-menu> -->
+        <mat-menu #appMenu>
+            <div *ngIf="app.isLoggedIn" class="m-4">
+                <p class="mat-headline-6">{{ (app.userData$ | async)?.name }}</p>
+                <p class="mat-body text-gray-500">{{ (app.userData$ | async)?.login }}</p>
+            </div>
+            <button mat-menu-item *ngIf="app.isLoggedIn" (click)="app.openEditProfilePage()">{{ 'HEADER.BUTTON.PROFILE_PAGE' | translate }}</button>
+            <mat-divider *ngIf="app.isLoggedIn"></mat-divider>
+            <button mat-menu-item (click)="auth()" >{{ app.isLoggedIn ? ('HEADER.BUTTON.LOGOUT' | translate) : ('HEADER.BUTTON.LOGIN' | translate) }}</button>
+            <button mat-menu-item *ngIf="!app.isLoggedIn" (click)="app.openSignUpPage()">{{ 'HEADER.BUTTON.SIGNUP' | translate }}</button>
+            <!-- <mat-divider></mat-divider> -->
+            <!-- <button mat-menu-item [matMenuTriggerFor]="langMenu">Language</button> -->
+        </mat-menu>
+        <button mat-icon-button aria-label="Menu" [matMenuTriggerFor]="appMenu" [class.hide]="!app.isLoggedIn">
+            <mat-icon [class.scale-150]="app.isLoggedIn">{{ app.isLoggedIn ? 'account_circle' : 'more_vert' }}</mat-icon>
+        </button>
+    </div>
+</mat-toolbar>

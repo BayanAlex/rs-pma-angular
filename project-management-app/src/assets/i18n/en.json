@@ -1,0 +1,95 @@
+{
+  "INPUTS": {
+    "ERROR_MESSAGES": {
+        "REQUIRED": {
+          "LOGIN": "Enter your login",
+          "USERNAME": "Enter your name",
+          "PASSWORD": "Enter your password",
+          "REPEAT_PASSWORD": "Repeat password"
+        },
+        "MINLENGTH": {
+          "LOGIN": "Login minimum length is {{value}}",
+          "USERNAME": "Name minimum length is {{value}}",
+          "PASSWORD": "Password minimum length is {{value}}"
+        },
+        "MAXLENGTH": {
+          "LOGIN": "Login maximum length is {{value}}",
+          "USERNAME": "Name maximum length is {{value}}",
+          "PASSWORD": "Password maximum length is {{value}}"
+        },
+        "STRENGTH": {
+          "PASSWORD": "Password should contain digits, small and big letters"
+        },
+        "MATCH": {
+          "REPEAT_PASSWORD": "Passwords should match"
+        },
+        "SYMBOLS": {
+          "LOGIN": "Latin letters, numbers and special symbols allowed only",
+          "PASSWORD": "Latin letters, numbers and special symbols allowed only"
+        }
+    },
+    "PLACEHOLDERS": {
+      "LOGIN": "Login",
+      "USERNAME": "Your name",
+      "PASSWORD": "Password",
+      "REPEAT_PASSWORD": "Repeat password"
+    }
+  },
+  "HEADER": {
+    "BUTTON": {
+      "SIGNUP": "Sign Up",
+      "LOGIN": "Login",
+      "LOGOUT": "Logout",
+      "PROFILE_PAGE": "Edit profile"
+    }
+  },
+  "LOGIN_PAGE": {
+    "TITLE": "Login",
+    "SUBMIT_BUTTON": "Login"
+  },
+  "SIGNUP_PAGE": {
+    "TITLE": "Sign Up",
+    "SUBMIT_BUTTON": "Sign Up"
+  },
+  "PROFILE_PAGE": {
+    "TITLE": "Edit profile",
+    "SUBMIT_BUTTON": "Save",
+    "DELETE_BUTTON": "Delete account",
+    "DELETE_EXPANSION_TITLE": "Delete my account",
+    "DELETE_CONFIRM_TITLE": "Please confirm",
+    "DELETE_CONFIRM_TEXT": "Do you really want to delete your account? :(",
+    "SAVED_MESSAGE": "Settings saved"
+  },
+  "FOOTER": {
+      "AUTHOR": "Oleksandr Shyhyda"
+  },
+  "CONFIRM_DIALOG": {
+    "YES_BUTTON": "Yes",
+    "NO_BUTTON": "No"
+  },
+  "MESSAGE_DIALOG": {
+    "OK_BUTTON": "OK",
+    "CLOSE_BUTTON": "Close"
+  },
+  "LOGOUT": {
+    "TEXT": "Do you really want to logout?",
+    "TITLE": "Please confirm"
+  },
+  "ERRORS": {
+    "LOGIN": {
+      "400": "Bad Request",
+      "401": "Authorization error"
+    },
+    "SIGNUP": {
+      "400": "Bad Request",
+      "409": "Login already exists"
+    },
+    "GET_USER": {
+      "404": "User was not found"
+    },
+    "PROFILE": {
+      "400": "Bad Request",
+      "409": "Login already exists"
+    }
+  }
+}
