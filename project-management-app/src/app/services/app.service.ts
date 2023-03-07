@@ -26,6 +26,15 @@ export class AppService {
     this.updateUserData();
   }
 
+  processError(error: Error) {
+    if (error.cause === 'TOKEN') {
+      this.logout();
+    } else {
+      this.loginState = false;
+    }
+    this.showErrorMessage(error);
+  }
+
   updateUserData(userData?: User): void {
     if(userData) {
       this.userData$.next(userData);
@@ -41,11 +50,10 @@ export class AppService {
           this.user = {...user};
           this.userData$.next(user);
         },
-        error: (error) => {
-          this.loginState = false;
-          this.showErrorMessage(error);
-        }
+        error: this.processError.bind(this)
       });
+    } else {
+      this.logout('/');
     }
   }
 

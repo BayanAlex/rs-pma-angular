@@ -89,8 +89,8 @@ export class UserFormComponent implements OnInit {
           this.app.showErrorMessage(error);
         }
       });
+      this.app.updateUserData();
     }
-    this.app.updateUserData();
   }
 
   allowedSymbolsValidator(): ValidatorFn {

@@ -25,8 +25,8 @@ export class ProfilePageComponent implements OnInit {
         this.app.deleteAccount().subscribe({
           next: () => this.pendingRequest = false,
           error: (error) => {
-            this.app.showErrorMessage(error);
             this.pendingRequest = false;
+            this.app.processError(error);
           }
         });
       }
@@ -42,8 +42,8 @@ export class ProfilePageComponent implements OnInit {
         this.app.showMessage('PROFILE_PAGE.SAVED_MESSAGE');
       },
       error: (error) => {
-        this.app.showErrorMessage(error);
         this.pendingRequest = false;
+        this.app.processError(error);
       }
     });
   }

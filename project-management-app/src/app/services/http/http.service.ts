@@ -15,7 +15,13 @@ export class HttpService {
   constructor(private httpClient: HttpClient) {}
 
   convertError(error: HttpErrorResponse, category: string): Error {
-    return new Error(error.error.message, { cause: `${category}.${error.status}` });
+    let cause: string;
+    if (error.status === 403) {
+      cause = 'TOKEN';
+    } else {
+      cause = `${category}.${error.status}`;
+    }
+    return new Error(error.error.message, { cause });
   }
 
   getUser(userId: string): Observable<User> {

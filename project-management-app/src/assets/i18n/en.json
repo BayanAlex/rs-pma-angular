@@ -90,6 +90,7 @@
     "PROFILE": {
       "400": "Bad Request",
       "409": "Login already exists"
-    }
+    },
+    "TOKEN": "Session timeout. Please login"
   }
 }

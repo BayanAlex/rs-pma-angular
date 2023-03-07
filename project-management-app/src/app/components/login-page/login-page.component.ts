@@ -21,8 +21,8 @@ export class LoginPageComponent {
         this.pendingRequest = false;
       },
       error: (error) => {
-        this.app.showErrorMessage(error);
         this.pendingRequest = false;
+        this.app.processError(error);
       }
     });
   }
