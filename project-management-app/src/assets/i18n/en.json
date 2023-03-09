@@ -32,15 +32,25 @@
       "LOGIN": "Login",
       "USERNAME": "Your name",
       "PASSWORD": "Password",
-      "REPEAT_PASSWORD": "Repeat password"
+      "REPEAT_PASSWORD": "Repeat password",
+      "BOARD_TITLE": "Board title"
     }
+  },
+  "DIALOG_BUTTONS": {
+    "YES": "Yes",
+    "NO": "No",
+    "OK": "OK",
+    "CANCEL": "Cancel",
+    "CLOSE": "Close"
   },
   "HEADER": {
     "BUTTON": {
       "SIGNUP": "Sign Up",
       "LOGIN": "Login",
       "LOGOUT": "Logout",
-      "PROFILE_PAGE": "Edit profile"
+      "PROFILE_PAGE": "Edit profile",
+      "BOARDS": "Boards",
+      "NEW_BOARD": "New board"
     }
   },
   "LOGIN_PAGE": {
@@ -56,24 +66,35 @@
     "SUBMIT_BUTTON": "Save",
     "DELETE_BUTTON": "Delete account",
     "DELETE_EXPANSION_TITLE": "Delete my account",
-    "DELETE_CONFIRM_TITLE": "Please confirm",
+    "DELETE_CONFIRM_TITLE": "Account delete",
     "DELETE_CONFIRM_TEXT": "Do you really want to delete your account? :(",
     "SAVED_MESSAGE": "Settings saved"
+  },
+  "BOARDS_PAGE": {
+    "TITLE": "Your boards",
+    "DELETE_TOOLTIP": "Delete",
+    "EDIT_TOOLTIP": "Edit",
+    "DELETE_DIALOG": {
+      "TEXT": "Do you realy want to delete this board?",
+      "CAPTION": "Board delete"
+    }
+  },
+  "NOT_FOUND_PAGE": {
+    "TITLE": "Oooops",
+    "TEXT": "Page unavailable"
   },
   "FOOTER": {
       "AUTHOR": "Oleksandr Shyhyda"
   },
-  "CONFIRM_DIALOG": {
-    "YES_BUTTON": "Yes",
-    "NO_BUTTON": "No"
+  "NEW_BOARD_DIALOG": {
+    "TITLE": "New board"
   },
-  "MESSAGE_DIALOG": {
-    "OK_BUTTON": "OK",
-    "CLOSE_BUTTON": "Close"
+  "EDIT_BOARD_DIALOG": {
+    "TITLE": "Edit board"
   },
   "LOGOUT": {
     "TEXT": "Do you really want to logout?",
-    "TITLE": "Please confirm"
+    "TITLE": "Logout"
   },
   "ERRORS": {
     "LOGIN": {

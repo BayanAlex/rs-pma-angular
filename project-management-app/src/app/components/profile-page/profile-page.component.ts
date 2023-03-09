@@ -12,7 +12,7 @@ import { AppService } from 'src/app/services/app.service';
 export class ProfilePageComponent implements OnInit {
   @Output() pendingRequest = false;
 
-  constructor(private http: HttpService, public app: AppService) { }
+  constructor(private http: HttpService, private app: AppService) { }
 
   ngOnInit() {
 

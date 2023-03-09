@@ -1,0 +1,11 @@
+<h1 mat-dialog-title class="text-center">{{ data.dialogTitle | translate }}</h1>
+<div mat-dialog-content>
+  <mat-form-field appearance="fill" hideRequiredMarker class="w-full">
+    <mat-label>{{ 'INPUTS.PLACEHOLDERS.BOARD_TITLE' | translate }}:</mat-label>
+    <input matInput [(ngModel)]="data.boardTitle" #titleInput>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-raised-button [mat-dialog-close]="data.boardTitle" [disabled]="!data.boardTitle ? true : null">{{ 'DIALOG_BUTTONS.OK' | translate }}</button>
+  <button mat-raised-button (click)="onCancelClick()">{{ 'DIALOG_BUTTONS.CANCEL' | translate }}</button>
+</div>

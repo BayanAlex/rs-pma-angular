@@ -1,0 +1,23 @@
+<!-- <div class="wrap w-full flex justify-center flex-wrap gap-[20px] m-[20px]">
+  <app-board
+    *ngFor="let board of boards; let i = index"
+    class="w-full"
+    [title]="board.title"
+    [id]="board._id"
+    [index]="i"
+    (deleteBoard)="deleteBoard($event)"
+    (editBoard)="editBoard($event)">
+  </app-board>
+</div> -->
+<h2 class="text-center my-3">{{ 'BOARDS_PAGE.TITLE' | translate }}</h2>
+<div class="boards">
+  <app-board
+    *ngFor="let board of boards; let i = index"
+    class="w-full"
+    [title]="board.title"
+    [id]="board._id"
+    [index]="i"
+    (deleteBoard)="deleteBoard($event)"
+    (editBoard)="editBoard($event)">
+  </app-board>
+</div>

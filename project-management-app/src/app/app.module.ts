@@ -17,6 +17,13 @@ import { SignUpPageComponent } from './components/signup-page/signup-page.compon
 import { UserFormComponent } from './components/user-form/user-form.component';
 import { ProfilePageComponent } from './components/profile-page/profile-page.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
+import { BoardsPageComponent } from './components/boards-page/boards-page.component';
+import { NotFoundPageComponent } from './components/not-found-page/not-found-page.component';
+import { BoardComponent } from './components/board/board.component';
+import { EditBoardDialogComponent } from './components/edit-board-dialog/edit-board-dialog.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { TasksPageComponent } from './components/tasks-page/tasks-page.component';
+import { TasksColumnComponent } from './components/tasks-column/tasks-column.component';
 
 
 @NgModule({
@@ -30,6 +37,12 @@ import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dial
     UserFormComponent,
     ProfilePageComponent,
     ConfirmDialogComponent,
+    BoardsPageComponent,
+    NotFoundPageComponent,
+    BoardComponent,
+    EditBoardDialogComponent,
+    TasksPageComponent,
+    TasksColumnComponent,
   ],
   imports: [
     BrowserModule,
@@ -42,7 +55,8 @@ import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dial
     BrowserModule,
     HttpClientModule,
     TranslationModule,
-    HttpModule
+    HttpModule,
+    MatTooltipModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -32,15 +32,25 @@
       "LOGIN": "Логін",
       "USERNAME": "Ваше ім'я",
       "PASSWORD": "Пароль",
-      "REPEAT_PASSWORD": "Повторіть пароль"
+      "REPEAT_PASSWORD": "Повторіть пароль",
+      "BOARD_TITLE": "Назва дошки"
     }
+  },
+  "DIALOG_BUTTONS": {
+    "YES": "Так",
+    "NO": "Ні",
+    "OK": "Добре",
+    "CANCEL": "Відміна",
+    "CLOSE": "Закрити"
   },
   "HEADER": {
     "BUTTON": {
       "SIGNUP": "Реєстрація",
       "LOGIN": "Вхід",
       "LOGOUT": "Вихід",
-      "PROFILE_PAGE": "Профіль"
+      "PROFILE_PAGE": "Профіль",
+      "BOARDS": "Дошки",
+      "NEW_BOARD": "Нова дошка"
     }
   },
   "LOGIN_PAGE": {
@@ -56,39 +66,50 @@
     "SUBMIT_BUTTON": "Зберегти",
     "DELETE_BUTTON": "Видалити аккаунт",
     "DELETE_EXPANSION_TITLE": "Видалити мій аккаунт",
-    "DELETE_CONFIRM_TITLE": "Будь ласка, підтвердіть",
+    "DELETE_CONFIRM_TITLE": "Видалення аккаунту",
     "DELETE_CONFIRM_TEXT": "Ви дійсно хочете видалити свій аккаунт? :(",
     "SAVED_MESSAGE": "Налаштування збережено"
+  },
+  "BOARDS_PAGE": {
+    "TITLE": "Ваші дошки",
+    "DELETE_TOOLTIP": "Видалити",
+    "EDIT_TOOLTIP": "Редагувати",
+    "DELETE_DIALOG": {
+      "TEXT": "Ви дійсно бажаєте видалити цю дошку?",
+      "CAPTION": "Видалення дошки"
+    }
+  },
+  "NOT_FOUND_PAGE": {
+    "TITLE": "Оооойййй",
+    "TEXT": "Сторінка недоступна"
   },
   "FOOTER": {
       "AUTHOR": "Олександр Шигида"
   },
-  "CONFIRM_DIALOG": {
-    "YES_BUTTON": "Так",
-    "NO_BUTTON": "Ні"
+  "NEW_BOARD_DIALOG": {
+    "TITLE": "Нова дошка"
   },
-  "MESSAGE_DIALOG": {
-    "OK_BUTTON": "OK",
-    "CLOSE_BUTTON": "Закрити"
+  "EDIT_BOARD_DIALOG": {
+    "TITLE": "Редагувати дошку"
   },
   "LOGOUT": {
     "TEXT": "Ви дійсно хочете вийти?",
-    "TITLE": "Будь ласка, підтвердіть"
+    "TITLE": "Вихід з аккаунту"
   },
   "ERRORS": {
     "LOGIN": {
-      "400": "Поганий запит",
+      "400": "Помилка запиту",
       "401": "Помилка авторизації"
     },
     "SIGNUP": {
-      "400": "Поганий запит",
+      "400": "Помилка запиту",
       "409": "Користувач вже існує"
     },
     "GET_USER": {
       "404": "Користувач не знайдений"
     },
     "PROFILE": {
-      "400": "Поганий запит",
+      "400": "Помилка запиту",
       "409": "Користувач вже існує"
     },
     "TOKEN": "Час сесії вичерпаний. Будь ласка, виконайте вхід"

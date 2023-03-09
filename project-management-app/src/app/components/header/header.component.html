@@ -1,6 +1,8 @@
 <mat-toolbar color="primary" class="justify-between items-center h-20">
     <a mat-button [routerLink]="['/']" class="text-2xl">PMA</a>
     <div class="flex items-center gap-3">
+        <button mat-mini-fab *ngIf="router.url === '/boards'" (click)="createBoard()" [matTooltip]="'HEADER.BUTTON.NEW_BOARD' | translate"><mat-icon>add</mat-icon></button>
+        <button mat-mini-fab *ngIf="router.url !== '/boards' && app.isLoggedIn" [routerLink]="['/boards']" [matTooltip]="'HEADER.BUTTON.BOARDS' | translate"><mat-icon>apps</mat-icon></button>
         <mat-button-toggle-group class="lang h-9 text-sm items-center" name="lang" aria-label="Choose language">
             <mat-button-toggle
                 [checked]="lang === translate.currentLang"
@@ -32,7 +34,7 @@
             <!-- <button mat-menu-item [matMenuTriggerFor]="langMenu">Language</button> -->
         </mat-menu>
         <button mat-icon-button aria-label="Menu" [matMenuTriggerFor]="appMenu" [class.hide]="!app.isLoggedIn">
-            <mat-icon [class.scale-150]="app.isLoggedIn">{{ app.isLoggedIn ? 'account_circle' : 'more_vert' }}</mat-icon>
+            <mat-icon [class.scale-150]="app.isLoggedIn">{{ app.isLoggedIn ? 'person' : 'more_vert' }}</mat-icon>
         </button>
     </div>
 </mat-toolbar>

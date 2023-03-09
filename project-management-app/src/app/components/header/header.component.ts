@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { AppService } from 'src/app/services/app.service';
 
@@ -9,7 +10,10 @@ import { AppService } from 'src/app/services/app.service';
 })
 export class HeaderComponent {
 
-  constructor (public translate: TranslateService, public app: AppService) {
+  constructor (public translate: TranslateService, public app: AppService, public router: Router) {}
+
+  createBoard() {
+    this.app.createBoard('');
   }
 
   auth() {
@@ -23,7 +27,7 @@ export class HeaderComponent {
   logout() {
     this.app.showConfirmDialog('LOGOUT.TEXT').subscribe((confirm) => {
       if (confirm) {
-        this.app.logout();
+        this.app.logout('/');
       }
     });
   }

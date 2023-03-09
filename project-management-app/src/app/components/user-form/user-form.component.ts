@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators, AbstractControl, ValidationErrors, 
 import { AuthData } from 'src/app/interfaces/http.interfaces';
 import { InputsSettings, InputError } from '../../interfaces/app.interfaces';
 import { AppService } from 'src/app/services/app.service';
+import { Subscription } from 'rxjs'
 
 @Component({
   selector: 'app-user-form',
@@ -19,10 +20,11 @@ export class UserFormComponent implements OnInit {
   hidePassword = true;
   hideRepeatPassword = true;
   hideDeleteUserButton = true;
+  userDataSubscription: Subscription;
 
-  constructor(public app: AppService) {}
+  constructor(private app: AppService) {}
 
-  togglePassword(inputName: string) {
+  togglePassword(inputName: string): void {
     if (inputName === 'password') {
       this.hidePassword = !this.hidePassword;
     } else if (inputName === 'repeatPassword') {
@@ -50,7 +52,7 @@ export class UserFormComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.form = new FormGroup({
       login: new FormControl(
         '',
@@ -80,7 +82,7 @@ export class UserFormComponent implements OnInit {
     });
 
     if (this.type === 'profile') {
-      this.app.userData$.subscribe({
+      this.userDataSubscription = this.app.userData$.subscribe({
         next: (user) => {
           this.form.controls['login'].setValue(user.login);
           this.form.controls['username'].setValue(user.name);
@@ -128,12 +130,12 @@ export class UserFormComponent implements OnInit {
     }
   }
 
-  onSubmit() {
+  onSubmit(): void {
     const data: AuthData = { name: this.form.value.username, login: this.form.value.login, password: this.form.value.password };
     this.formSubmit.emit(data);
   }
 
-  onDeleteAccount() {
+  onDeleteAccount(): void {
     this.deleteAccount.emit();
   }
 

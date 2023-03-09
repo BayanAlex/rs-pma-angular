@@ -1,0 +1,11 @@
+<mat-card [routerLink]="['/boards', index]" class="block h-[200px] w-full cursor-pointer">
+  <mat-card-header>
+    <div class="w-full flex justify-between">
+      <button mat-icon-button color="primary" (click)="editClick($event)" [matTooltip]="'BOARDS_PAGE.EDIT_TOOLTIP' | translate"><mat-icon>edit</mat-icon></button>
+      <button mat-icon-button color="warn" (click)="deleteClick($event)" [matTooltip]="'BOARDS_PAGE.DELETE_TOOLTIP' | translate"><mat-icon>delete</mat-icon></button>
+    </div>
+  </mat-card-header>
+  <mat-card-content class="justify-center items-center h-full">
+    <h3 class="whitespace-normal text-center overflow-auto">{{ title }}</h3>
+  </mat-card-content>
+</mat-card>

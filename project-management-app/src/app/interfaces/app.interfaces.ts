@@ -24,14 +24,24 @@ export interface InputsSettings {
 }
 
 export interface User {
+  _id: string,
   name: string;
   login: string,
-  _id: string,
 }
 
 export interface ConfirmDialogData {
   title: string;
   text: string;
-  yesButtonCaption: string;
-  noButtonCaption: string;
+}
+
+export interface EditBoardData {
+  dialogTitle: string;
+  boardTitle: string;
+}
+
+export interface Board {
+  _id: string;
+  title: string;
+  owner: string;
+  users: string[];
 }

@@ -1,8 +1,8 @@
-<h1 mat-dialog-title *ngIf="data.title"> {{ data.title | translate }}</h1>
+<h1 mat-dialog-title *ngIf="data.title" class="text-center">{{ data.title | translate }}</h1>
 <div mat-dialog-content>
   <p>{{ data.text | translate }}</p>
 </div>
 <div mat-dialog-actions>
-  <button mat-raised-button mat-dialog-close="true">{{ data.yesButtonCaption | translate }}</button>
-  <button mat-raised-button (click)="onNoClick()" cdkFocusInitial>{{ data.noButtonCaption | translate }}</button>
+  <button mat-raised-button mat-dialog-close="true">{{ 'DIALOG_BUTTONS.YES' | translate }}</button>
+  <button mat-raised-button (click)="onNoClick()" cdkFocusInitial>{{ 'DIALOG_BUTTONS.NO' | translate }}</button>
 </div>

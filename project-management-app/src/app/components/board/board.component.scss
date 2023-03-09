@@ -1,0 +1,18 @@
+mat-card-content {
+  display: flex !important;
+}
+
+::ng-deep .mat-mdc-mini-fab{
+  height: 35px !important;
+  width: 35px !important;
+  margin-left: 12px;
+}
+
+.mat-mdc-card {
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: rgba($color: cornflowerblue, $alpha: 0.2);
+    transition: all 0.3s ease;
+  }
+}

@@ -11,7 +11,7 @@ import { AppService } from 'src/app/services/app.service';
 export class LoginPageComponent {
   @Output() pendingRequest = false;
 
-  constructor(public app: AppService) { }
+  constructor(private app: AppService) { }
 
   login(data: AuthData) {
     delete data.name;

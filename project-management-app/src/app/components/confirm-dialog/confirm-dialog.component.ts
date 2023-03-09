@@ -1,4 +1,4 @@
-import { Component, Input, Inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ConfirmDialogData } from 'src/app/interfaces/app.interfaces';
 

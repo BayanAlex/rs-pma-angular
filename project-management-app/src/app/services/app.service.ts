@@ -19,6 +19,8 @@ export class AppService {
   public user: User = { name: '', login: '', _id: '' };
   public readonly langList = ['en', 'ua'];
   public userData$ = new Subject<User>();
+  public createBoard$ = new Subject<string>();
+  // public createBoard$ = this.createBoardSubject$.asObservable();
 
   constructor(private router: Router, private http: HttpService, public translate: TranslateService, private snackBar: MatSnackBar, private dialog: MatDialog) {
     const lang = localStorage.getItem('lang');
@@ -26,17 +28,19 @@ export class AppService {
     this.updateUserData();
   }
 
-  processError(error: Error) {
+  createBoard(title: string): void {
+    this.createBoard$.next(title);
+  }
+
+  processError(error: Error): void {
     if (error.cause === 'TOKEN') {
-      this.logout();
-    } else {
-      this.loginState = false;
+      this.logout('/');
     }
     this.showErrorMessage(error);
   }
 
   updateUserData(userData?: User): void {
-    if(userData) {
+    if (userData) {
       this.userData$.next(userData);
       return;
     }
@@ -47,7 +51,7 @@ export class AppService {
       this.http.token = token;
       this.http.getUser(id).subscribe({
         next: (user) => {
-          this.user = {...user};
+          this.user = user;
           this.userData$.next(user);
         },
         error: this.processError.bind(this)
@@ -65,11 +69,17 @@ export class AppService {
     this.loginState = value;
   }
 
-  logout(gotoUrl = '/login') {
+  gotoPage(url: string): void {
+    this.router.navigate([url]);
+  }
+
+  logout(gotoUrl?: string): void {
     this.isLoggedIn = false;
     this.user._id = '';
     this.http.logout();
-    this.router.navigate([gotoUrl]);
+    if (gotoUrl) {
+      this.gotoPage(gotoUrl);
+    }
   }
 
   login(data: AuthData): Observable<void> {
@@ -78,7 +88,7 @@ export class AppService {
         map(() => {
           this.updateUserData();
           this.isLoggedIn = true;
-          this.router.navigate(['/']);
+          this.gotoPage('/boards');
         }),
         catchError((error) => {
           return throwError(() => error);
@@ -86,7 +96,7 @@ export class AppService {
       )
   }
 
-  deleteAccount() {
+  deleteAccount(): Observable<void> {
     return this.http.deleteAccount(this.user._id)
       .pipe(
         map(() => {
@@ -104,28 +114,28 @@ export class AppService {
   }
 
   openLoginPage(): void {
-    this.router.navigate(['/login']);
+    this.gotoPage('/login');
   }
 
   openSignUpPage(): void {
-    this.router.navigate(['/signup']);
+    this.gotoPage('/signup');
   }
 
   openEditProfilePage(): void {
-    this.router.navigate(['/profile']);
+    this.gotoPage('/profile');
   }
 
-  showSnackBar(text: string, buttonCaption: string) {
+  showSnackBar(text: string, buttonCaption: string): void {
     this.snackBar.open(text, buttonCaption, { verticalPosition: 'top', panelClass: 'snack-bar' })
   }
 
-  showMessage(text: string, buttonCaption = 'MESSAGE_DIALOG.CLOSE_BUTTON'): void {
+  showMessage(text: string, buttonCaption = 'DIALOG_BUTTONS.CLOSE'): void {
     this.translate.get([text, buttonCaption]).subscribe({
       next: (result) => this.showSnackBar(result[text], result[buttonCaption])
     })
   }
 
-  showErrorMessage(error: Error, buttonCaption = 'MESSAGE_DIALOG.CLOSE_BUTTON'): void {
+  showErrorMessage(error: Error, buttonCaption = 'DIALOG_BUTTONS.CLOSE'): void {
     const errorPath = `ERRORS.${error.cause}`;
     this.translate.get([errorPath, buttonCaption]).subscribe({
       next: (result) => {
@@ -135,9 +145,9 @@ export class AppService {
     })
   }
 
-  showConfirmDialog(text: string, title = '', yesButtonCaption = 'CONFIRM_DIALOG.YES_BUTTON', noButtonCaption = 'CONFIRM_DIALOG.NO_BUTTON'): Observable<boolean> {
+  showConfirmDialog(text: string, title = ''): Observable<boolean> {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: { title, text, yesButtonCaption, noButtonCaption },
+      data: { title, text },
     });
 
     return dialogRef.afterClosed();
