@@ -4,7 +4,7 @@ import { HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { AuthData, LoginResponse } from 'src/app/interfaces/http.interfaces';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { User, Board } from 'src/app/interfaces/app.interfaces';
+import { User, Board, Column, Task, TaskOrderRequest } from 'src/app/interfaces/app.interfaces';
 
 
 @Injectable()
@@ -33,6 +33,100 @@ export class HttpService {
     return new Error(error.error.message, { cause });
   }
 
+  searchTask(searchValue: string): Observable<Task[]> {
+    return this.httpClient
+    .get<Task[]>('tasksSet', { ...this.httpOptions, params: { search: searchValue } })
+    .pipe(catchError((error) => throwError(() => this.convertError(error, 'TASK'))));
+  }
+
+  getTasks(boardId :string): Observable<Task[]> {
+    return this.httpClient
+      .get<Task[]>(`tasksSet/${boardId}`, this.httpOptions)
+      .pipe(catchError((error) => throwError(() => this.convertError(error, 'TASK'))));
+  }
+
+  updateTasksOrder(tasks: Task[]): Observable<Task[]> {
+    const tasksUpdateData: TaskOrderRequest[] = tasks.map((task) => ({ _id: task._id, order: task.order, columnId: task.columnId }));
+    return this.httpClient
+      .patch<Task[]>('tasksSet', tasksUpdateData, this.httpOptions)
+      .pipe(catchError((error) => throwError(() => this.convertError(error, 'TASK'))));
+  }
+
+  createTask(title: string, description: string, boardId: string, columnId: string, order: number, userId: string): Observable<Task> {
+    const task: Omit<Task, '_id' | 'boardId' | 'columnId'> = { title, description, order, userId, users: [] };
+    return this.httpClient
+      .post<Task>(`boards/${boardId}/columns/${columnId}/tasks`, task, this.httpOptions)
+      .pipe(catchError((error) => throwError(() => this.convertError(error, 'TASK'))));
+  }
+
+  editTask(title: string, description: string, boardId: string, columnId: string, taskId: string, order: number, userId: string): Observable<Task> {
+    const task: Omit<Task, '_id' | 'boardId'> = { title, description, order, columnId, userId, users: [] };
+    return this.httpClient
+      .put<Task>(`boards/${boardId}/columns/${columnId}/tasks/${taskId}`, task, this.httpOptions)
+      .pipe(catchError((error) => throwError(() => this.convertError(error, 'TASK'))));
+  }
+
+  deleteTask(boardId: string, columnId: string, taskId: string): Observable<void> {
+    return this.httpClient
+      .get<Task>(`boards/${boardId}/columns/${columnId}/tasks/${taskId}`, this.httpOptions)
+      .pipe(
+        mergeMap((task) => {
+          if (task) {
+            return this.httpClient.delete<void>(`boards/${boardId}/columns/${columnId}/tasks/${taskId}`, this.httpOptions);
+          } else {
+           throw new Error('Task was not found', { cause: 'TASK.404' });
+          }
+        }),
+        catchError((error) => {
+          return throwError(() => this.convertError(error, 'TASK'));
+        })
+    );
+  }
+
+  getColumns(boardId :string): Observable<Column[]> {
+    return this.httpClient
+      .get<Column[]>(`boards/${boardId}/columns`, this.httpOptions)
+      .pipe(catchError((error) => throwError(() => this.convertError(error, 'COLUMN'))));
+  }
+
+  updateColumnsOrder(columns: Column[]): Observable<Column[]> {
+    const columnsUpdateData: Pick<Column, '_id' | 'order'>[] = columns.map((column) => ({ _id: column._id, order: column.order }));
+    return this.httpClient
+      .patch<Column[]>('columnsSet', columnsUpdateData, this.httpOptions)
+      .pipe(catchError((error) => throwError(() => this.convertError(error, 'COLUMN'))));
+  }
+
+  createColumn(title: string, order: number, boardId: string): Observable<Column> {
+    const column: Omit<Column, '_id' | 'boardId'> = { title, order };
+    return this.httpClient
+      .post<Column>(`boards/${boardId}/columns`, column, this.httpOptions)
+      .pipe(catchError((error) => throwError(() => this.convertError(error, 'COLUMN'))));
+  }
+
+  editColumn(title: string, order: number, boardId: string, columnId: string): Observable<Column> {
+    const column: Omit<Column, '_id' | 'boardId'> = { title, order };
+    return this.httpClient
+      .put<Column>(`boards/${boardId}/columns/${columnId}`, column, this.httpOptions)
+      .pipe(catchError((error) => throwError(() => this.convertError(error, 'COLUMN'))));
+  }
+
+  deleteColumn(boardId: string, columnId: string): Observable<void> {
+    return this.httpClient
+      .get<Column>(`boards/${boardId}/columns/${columnId}`, this.httpOptions)
+      .pipe(
+        mergeMap((column) => {
+          if (column) {
+            return this.httpClient.delete<void>(`boards/${boardId}/columns/${columnId}`, this.httpOptions);
+          } else {
+           throw new Error('Column was not found', { cause: 'COLUMN.404' });
+          }
+        }),
+        catchError((error) => {
+          return throwError(() => this.convertError(error, 'COLUMN'));
+        })
+    );
+  }
+
   deleteBoard(id: string): Observable<void> {
     return this.httpClient
       .get<Board>(`boards/${id}`, this.httpOptions)
@@ -41,11 +135,11 @@ export class HttpService {
           if (board) {
             return this.httpClient.delete<void>(`boards/${id}`, this.httpOptions);
           } else {
-           throw new Error('Board not found');
+           throw new Error('Board was not found', { cause: 'BOARD.404' });
           }
         }),
         catchError((error) => {
-          return throwError(() => this.convertError(error, "BOARD"));
+          return throwError(() => this.convertError(error, 'BOARD'));
         })
     );
   }
@@ -64,11 +158,11 @@ export class HttpService {
           if (board) {
             return this.httpClient.put<Board>(`boards/${id}`, boardData, this.httpOptions);
           } else {
-            throw new Error('Board not found');
+            throw new Error('Board was not found', { cause: 'BOARD.404' });
           }
         }),
         catchError((error) => {
-          return throwError(() => this.convertError(error, "BOARD"));
+          return throwError(() => this.convertError(error, 'BOARD'));
         })
     );
   }
@@ -78,22 +172,28 @@ export class HttpService {
       title,
       owner,
       users: []
-    }
+    };
     return this.httpClient
       .post<Board>('boards', board, this.httpOptions)
-      .pipe(catchError((error) => throwError(() => this.convertError(error, "BOARD"))));
+      .pipe(catchError((error) => throwError(() => this.convertError(error, 'BOARD'))));
   }
 
   getBoards(): Observable<Board[]> {
     return this.httpClient
       .get<Board[]>('boards', this.httpOptions)
-      .pipe(catchError((error) => throwError(() => this.convertError(error, "BOARD"))));
+      .pipe(catchError((error) => throwError(() => this.convertError(error, 'BOARD'))));
+  }
+
+  getBoard(id: string): Observable<Board> {
+    return this.httpClient
+      .get<Board>(`boards/${id}`, this.httpOptions)
+      .pipe(catchError((error) => throwError(() => this.convertError(error, 'BOARD'))));
   }
 
   getUser(userId: string): Observable<User> {
     return this.httpClient
       .get<User>(`users/${userId}`, this.httpOptions)
-      .pipe(catchError((error) => throwError(() => this.convertError(error, "GET_USER"))));
+      .pipe(catchError((error) => throwError(() => this.convertError(error, 'GET_USER'))));
   }
 
   login(loginData: AuthData): Observable<User> {
@@ -113,26 +213,26 @@ export class HttpService {
           localStorage.setItem('id', user._id);
           return user;
         }),
-        catchError((error) => throwError(() => this.convertError(error, "LOGIN")))
+        catchError((error) => throwError(() => this.convertError(error, 'LOGIN')))
       );
   }
 
   signUp(signUpData: AuthData): Observable<void> {
     return this.httpClient
       .post<void>('auth/signup', signUpData, this.httpOptions)
-      .pipe(catchError((error) => throwError(() => this.convertError(error, "SIGNUP"))));
+      .pipe(catchError((error) => throwError(() => this.convertError(error, 'SIGNUP'))));
   }
 
   saveProfile(userId: string, userData: AuthData): Observable<User> {
     return this.httpClient
       .put<User>(`users/${userId}`, userData, this.httpOptions)
-      .pipe(catchError((error) => throwError(() => this.convertError(error, "PROFILE"))));
+      .pipe(catchError((error) => throwError(() => this.convertError(error, 'PROFILE'))));
   }
 
   deleteAccount(userId: string): Observable<void> {
     return this.httpClient
       .delete<void>(`users/${userId}`, this.httpOptions)
-      .pipe(catchError((error) => throwError(() => this.convertError(error, "DELETE_USER"))));
+      .pipe(catchError((error) => throwError(() => this.convertError(error, 'DELETE_USER'))));
   }
 
   get baseUrl() {

@@ -1,4 +1,4 @@
-<mat-card [routerLink]="['/boards', index]" class="block h-[200px] w-full cursor-pointer">
+<mat-card [routerLink]="['/boards', id]" class="block h-[200px] w-full cursor-pointer">
   <mat-card-header>
     <div class="w-full flex justify-between">
       <button mat-icon-button color="primary" (click)="editClick($event)" [matTooltip]="'BOARDS_PAGE.EDIT_TOOLTIP' | translate"><mat-icon>edit</mat-icon></button>

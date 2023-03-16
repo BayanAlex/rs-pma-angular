@@ -33,7 +33,11 @@
       "USERNAME": "Your name",
       "PASSWORD": "Password",
       "REPEAT_PASSWORD": "Repeat password",
-      "BOARD_TITLE": "Board title"
+      "BOARD_TITLE": "Board title",
+      "COLUMN_TITLE": "Column title",
+      "TASK_TITLE": "Task title",
+      "TASK_DESCRIPTION": "Description",
+      "SEARCH": "Search tasks"
     }
   },
   "DIALOG_BUTTONS": {
@@ -49,8 +53,12 @@
       "LOGIN": "Login",
       "LOGOUT": "Logout",
       "PROFILE_PAGE": "Edit profile",
+      "LANGUAGES": "Language",
       "BOARDS": "Boards",
-      "NEW_BOARD": "New board"
+      "NEW_COLUMN": "New column",
+      "NEW_BOARD": "New board",
+      "SEARCH": "Search tasks",
+      "SEARCH_CLOSE": "Close search"
     }
   },
   "LOGIN_PAGE": {
@@ -79,6 +87,26 @@
       "CAPTION": "Board delete"
     }
   },
+  "TASKS_PAGE": {
+    "TITLE": "Tasks",
+    "DRAG_TOOLTIP": "Click to edit, drag to reorder",
+    "COLUMN": {
+      "DELETE_TOOLTIP": "Delete column",
+      "EDIT_TOOLTIP": "Edit",
+      "DELETE_DIALOG": {
+        "TEXT": "Do you realy want to delete this column?",
+        "CAPTION": "Column delete"
+      }
+    },
+    "TASK": {
+      "ADD": "Add task",
+      "DELETE_TOOLTIP": "Delete task",
+      "DELETE_DIALOG": {
+        "TEXT": "Do you realy want to delete this task?",
+        "CAPTION": "Task delete"
+      }
+    }
+  },
   "NOT_FOUND_PAGE": {
     "TITLE": "Oooops",
     "TEXT": "Page unavailable"
@@ -91,6 +119,18 @@
   },
   "EDIT_BOARD_DIALOG": {
     "TITLE": "Edit board"
+  },
+  "NEW_COLUMN_DIALOG": {
+    "TITLE": "New column"
+  },
+  "EDIT_COLUMN_DIALOG": {
+    "TITLE": "Edit column"
+  },
+  "NEW_TASK_DIALOG": {
+    "TITLE": "New task"
+  },
+  "EDIT_TASK_DIALOG": {
+    "TITLE": "Edit task"
   },
   "LOGOUT": {
     "TEXT": "Do you really want to logout?",
@@ -112,6 +152,22 @@
       "400": "Bad Request",
       "409": "Login already exists"
     },
+    "BOARD": {
+      "400": "Bad Request",
+      "404": "Board was not found"
+    },
+    "COLUMN": {
+      "400": "Bad Request",
+      "404": "Column was not found"
+    },
+    "TASK": {
+      "400": "Bad Request",
+      "404": "Column was not found"
+    },
     "TOKEN": "Session timeout. Please login"
+  },
+  "LANGUAGES": {
+    "UA": "Ukrainian",
+    "EN": "English"
   }
 }

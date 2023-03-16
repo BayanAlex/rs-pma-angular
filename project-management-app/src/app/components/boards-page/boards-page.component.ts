@@ -3,8 +3,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { Board } from 'src/app/interfaces/app.interfaces';
 import { AppService } from 'src/app/services/app.service';
 import { HttpService } from 'src/app/services/http/http.service';
-import { EditBoardDialogComponent } from '../edit-board-dialog/edit-board-dialog.component';
+import { EditTitleDialogComponent } from '../edit-title-dialog/edit-title-dialog.component';
 import { Observable, Subscription } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
 
 @Component({
@@ -16,12 +17,12 @@ export class BoardsPageComponent implements OnInit, OnDestroy {
   boards: Board[];
   createBoardSubscription: Subscription;
 
-  constructor(private app: AppService, private http: HttpService, private dialog: MatDialog) {}
+  constructor(private app: AppService, private http: HttpService, private route: ActivatedRoute, private dialog: MatDialog) {}
 
   ngOnInit(): void {
-    this.http.getBoards().subscribe({
-      next: (boards) => {
-        this.boards = boards;
+    this.route.data.subscribe({
+      next: (data) => {
+        this.boards = data['boards'];
       },
       error: (error) => {
         this.app.processError(error);
@@ -29,8 +30,8 @@ export class BoardsPageComponent implements OnInit, OnDestroy {
     });
 
     this.createBoardSubscription = this.app.createBoard$.subscribe({
-      next: (title) => {
-        this.createBoard(title);
+      next: () => {
+        this.createBoard();
       }
     });
   }
@@ -39,13 +40,13 @@ export class BoardsPageComponent implements OnInit, OnDestroy {
     this.createBoardSubscription.unsubscribe();
   }
 
-  showEditDialog(dialogTitle: string, boardTitle: string): Observable<string> {
-    const dialogRef = this.dialog.open(EditBoardDialogComponent, { data: { dialogTitle, boardTitle } });
+  showEditDialog(dialogTitle: string, title: string): Observable<string> {
+    const dialogRef = this.dialog.open(EditTitleDialogComponent, { data: { dialogTitle, title, placeholder: 'INPUTS.PLACEHOLDERS.BOARD_TITLE' } });
     return dialogRef.afterClosed();
   }
 
-  createBoard(title: string): void {
-    this.showEditDialog('NEW_BOARD_DIALOG.TITLE', title).subscribe({
+  createBoard(): void {
+    this.showEditDialog('NEW_BOARD_DIALOG.TITLE', '').subscribe({
       next: (result) => {
         if (result) {
           this.http.createBoard(result, this.app.user.login).subscribe({

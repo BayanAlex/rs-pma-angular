@@ -20,10 +20,10 @@ import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dial
 import { BoardsPageComponent } from './components/boards-page/boards-page.component';
 import { NotFoundPageComponent } from './components/not-found-page/not-found-page.component';
 import { BoardComponent } from './components/board/board.component';
-import { EditBoardDialogComponent } from './components/edit-board-dialog/edit-board-dialog.component';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { EditTitleDialogComponent } from './components/edit-title-dialog/edit-title-dialog.component';
 import { TasksPageComponent } from './components/tasks-page/tasks-page.component';
-import { TasksColumnComponent } from './components/tasks-column/tasks-column.component';
+import { EditTaskDialogComponent } from './components/edit-task-dialog/edit-task-dialog.component';
+import { PickPipe } from './pipes/pick.pipe';
 
 
 @NgModule({
@@ -40,9 +40,10 @@ import { TasksColumnComponent } from './components/tasks-column/tasks-column.com
     BoardsPageComponent,
     NotFoundPageComponent,
     BoardComponent,
-    EditBoardDialogComponent,
+    EditTitleDialogComponent,
     TasksPageComponent,
-    TasksColumnComponent,
+    EditTaskDialogComponent,
+    PickPipe,
   ],
   imports: [
     BrowserModule,
@@ -56,7 +57,8 @@ import { TasksColumnComponent } from './components/tasks-column/tasks-column.com
     HttpClientModule,
     TranslationModule,
     HttpModule,
-    MatTooltipModule
+
+
   ],
   providers: [],
   bootstrap: [AppComponent]

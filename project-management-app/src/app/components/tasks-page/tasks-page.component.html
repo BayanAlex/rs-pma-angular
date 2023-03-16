@@ -1,1 +1,88 @@
-<p>tasks-page works!</p>
+<h2 class="text-center">{{ boardTitle }}</h2>
+<div cdkDropList cdkDropListOrientation="horizontal" class="columns" (cdkDropListDropped)="dropColumn($event)">
+  <mat-card *ngFor="let column of columns; let columnIndex = index" class="column" cdkDragLockAxis="x" cdkDrag>
+
+    <mat-card-header cdkDragHandle class="">
+      <div
+        class="title-cover"
+        *ngIf="!column.editMode"
+        [matTooltip]="'TASKS_PAGE.DRAG_TOOLTIP' | translate"
+        matTooltipShowDelay="1000"
+        (click)="setEditMode(columnIndex, true); titleInput.focus()"
+      >
+      </div>
+      <div *ngIf="column.editMode" class="column-edit-buttons flex">
+        <button
+          mat-icon-button
+          color="primary"
+          onclick="this.blur()"
+          (click)="setEditMode(columnIndex, false); editColumnTitle(titleInput.value, columnIndex)"
+        >
+          <mat-icon>done</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          color="warn"
+          onclick="this.blur()"
+          (click)="setEditMode(columnIndex, false); titleInput.value = column.title"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <input matInput class="column-title" #titleInput [value]="column.title"
+        (keyup.enter)="setEditMode(columnIndex, false); editColumnTitle(titleInput.value, columnIndex); titleInput.blur()"
+        (keyup.esc)="setEditMode(columnIndex, false); titleInput.value = column.title; titleInput.blur()"
+      />
+      <button
+        mat-icon-button
+        *ngIf="!column.editMode"
+        color="warn"
+        class="column-delete-button"
+        onclick="this.blur()"
+        (click)="deleteColumnClick($event, columnIndex)"
+        [matTooltip]="'TASKS_PAGE.COLUMN.DELETE_TOOLTIP' | translate"
+      >
+        <mat-icon>delete</mat-icon>
+      </button>
+    </mat-card-header>
+
+    <mat-card-content
+      cdkDropList
+      [id]="column._id"
+      [cdkDropListData]="column"
+      [cdkDropListConnectedTo]="columns | pick:'_id'"
+      class="column"
+      (cdkDropListDropped)="dropTask($event)"
+    >
+      <div class="" [ngClass]="{'tasks': column.tasks.length > 0}">
+        <div
+          class="task"
+          *ngFor="let task of column.tasks; let taskIndex = index"
+          cdkDrag
+          [matTooltip]="'TASKS_PAGE.DRAG_TOOLTIP' | translate"
+          matTooltipShowDelay="1000"
+          onclick="this.blur()"
+          (click)="editTask(columnIndex, taskIndex)"
+        >
+          <div class="task-content">
+            <h3 class="task-title">{{ task.title }}</h3>
+            <p class="task-description">{{ task.description }}</p>
+          </div>
+          <button
+            mat-icon-button color="accent"
+            class="task-delete-button"
+            onclick="this.blur()"
+            (click)="deleteTaskClick($event, columnIndex, taskIndex)"
+            [matTooltip]="'TASKS_PAGE.TASK.DELETE_TOOLTIP' | translate">
+            <mat-icon>remove</mat-icon>
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-stroked-button color="primary" class="new-task-button w-full"  onclick="this.blur()" (click)="createTask(columnIndex)"><mat-icon>add</mat-icon>{{ 'TASKS_PAGE.TASK.ADD' | translate }}</button>
+    </mat-card-actions>
+
+  </mat-card>
+</div>

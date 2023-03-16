@@ -19,7 +19,8 @@ export class AppService {
   public user: User = { name: '', login: '', _id: '' };
   public readonly langList = ['en', 'ua'];
   public userData$ = new Subject<User>();
-  public createBoard$ = new Subject<string>();
+  public createBoard$ = new Subject<void>();
+  public createColumn$ = new Subject<void>();
   // public createBoard$ = this.createBoardSubject$.asObservable();
 
   constructor(private router: Router, private http: HttpService, public translate: TranslateService, private snackBar: MatSnackBar, private dialog: MatDialog) {
@@ -28,8 +29,12 @@ export class AppService {
     this.updateUserData();
   }
 
-  createBoard(title: string): void {
-    this.createBoard$.next(title);
+  createBoard(): void {
+    this.createBoard$.next();
+  }
+
+  createColumn(): void {
+    this.createColumn$.next();
   }
 
   processError(error: Error): void {
@@ -149,7 +154,6 @@ export class AppService {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: { title, text },
     });
-
     return dialogRef.afterClosed();
   }
 }
