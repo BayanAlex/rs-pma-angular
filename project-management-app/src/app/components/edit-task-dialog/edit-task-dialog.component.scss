@@ -4,3 +4,16 @@ div[mat-dialog-actions] {
   gap: 20px;
   padding: 20px !important;
 }
+
+.check-item-title {
+  border-bottom: 1px solid transparent;
+
+  &:focus-visible {
+    outline: unset;
+    border-bottom-color: black;
+  }
+
+  &:not(:focus-visible).ng-invalid[required] {
+    border-bottom-color: red;
+  }
+}

@@ -1,0 +1,9 @@
+$page-bg-color: rgb(249, 243, 255);
+$board-hover-color: rgba($color: rgb(235, 242, 255), $alpha: 0.2);
+
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}

@@ -1,16 +1,17 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, from, forkJoin } from 'rxjs';
 import { AuthData, LoginResponse } from 'src/app/interfaces/http.interfaces';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { User, Board, Column, Task, TaskOrderRequest } from 'src/app/interfaces/app.interfaces';
+import { User, Board, Column, Task, TaskOrderRequest, CheckList, CheckItem } from 'src/app/interfaces/app.interfaces';
 
 
 @Injectable()
 export class HttpService {
   private serverUrl = 'https://striped-ship-production.up.railway.app';
   public token = '';
+  public httpRequestPending = false;
   httpOptions = {
     headers: new HttpHeaders({
       'accept': 'application/json',
@@ -30,13 +31,44 @@ export class HttpService {
     } else {
       cause = `${category}.${error.status}`;
     }
-    return new Error(error.error.message, { cause });
+    return new Error(error?.error?.message ?? error.message, { cause });
   }
 
-  searchTask(searchValue: string): Observable<Task[]> {
+  createCheckList(checkList: CheckList): Observable<CheckList> {
+    return forkJoin(checkList.map((item: CheckItem) => {
+      delete item._id;
+      return this.httpClient
+        .post<CheckItem>('points', item, this.httpOptions)
+        .pipe(catchError((error) => throwError(() => this.convertError(error, 'POINT'))));
+      })
+    );
+  }
+
+  getCheckList(taskId :string): Observable<CheckList> {
     return this.httpClient
-    .get<Task[]>('tasksSet', { ...this.httpOptions, params: { search: searchValue } })
-    .pipe(catchError((error) => throwError(() => this.convertError(error, 'TASK'))));
+      .get<CheckList>(`points/${taskId}`, this.httpOptions)
+      .pipe(catchError((error) => throwError(() => this.convertError(error, 'POINT'))));
+  }
+
+  editCheckItem(id: string, title: string, done: boolean): Observable<CheckItem> {
+    return this.httpClient
+      .patch<CheckItem>(`points/${id}`, { title, done }, this.httpOptions)
+      .pipe(catchError((error) => throwError(() => this.convertError(error, 'POINT'))));
+  }
+
+  deleteCheckItem(id: string): Observable<void> {
+    return this.httpClient
+      .delete<void>(`points/${id}`, this.httpOptions)
+      .pipe(catchError((error) => throwError(() => this.convertError(error, 'POINT'))));
+  }
+
+  searchTask(searchValue: string, userId: string): Observable<Task[]> {
+    return this.httpClient
+      .get<Task[]>('tasksSet', { ...this.httpOptions, params: { search: searchValue } })
+      .pipe(
+        map((tasks: Task[]) => tasks.filter((task: Task) => task.userId === userId)),
+        catchError((error) => throwError(() => this.convertError(error, 'TASK')))
+        );
   }
 
   getTasks(boardId :string): Observable<Task[]> {
@@ -53,17 +85,33 @@ export class HttpService {
   }
 
   createTask(title: string, description: string, boardId: string, columnId: string, order: number, userId: string): Observable<Task> {
-    const task: Omit<Task, '_id' | 'boardId' | 'columnId'> = { title, description, order, userId, users: [] };
+    const task: Omit<Task, '_id' | 'boardId' | 'columnId' | 'checkList'> = { title, description: !!description ? description : ' ', order, userId, users: [] };
     return this.httpClient
       .post<Task>(`boards/${boardId}/columns/${columnId}/tasks`, task, this.httpOptions)
-      .pipe(catchError((error) => throwError(() => this.convertError(error, 'TASK'))));
+      .pipe(
+        map((task: Task) => {
+          if (task.description === ' ') {
+            task.description = ''; // Backend reply hangs when passing empty description
+          }
+          return task;
+        }),
+        catchError((error) => throwError(() => this.convertError(error, 'TASK')))
+      );
   }
 
   editTask(title: string, description: string, boardId: string, columnId: string, taskId: string, order: number, userId: string): Observable<Task> {
-    const task: Omit<Task, '_id' | 'boardId'> = { title, description, order, columnId, userId, users: [] };
+    const task: Omit<Task, '_id' | 'boardId' | 'checkList'> = { title, description: !!description ? description : ' ', order, columnId, userId, users: [] };
     return this.httpClient
       .put<Task>(`boards/${boardId}/columns/${columnId}/tasks/${taskId}`, task, this.httpOptions)
-      .pipe(catchError((error) => throwError(() => this.convertError(error, 'TASK'))));
+      .pipe(
+        map((task: Task) => {
+          if (task.description === ' ') {
+            task.description = ''; // Backend reply hangs when passing empty description
+          }
+          return task;
+        }),
+        catchError((error) => throwError(() => this.convertError(error, 'TASK')))
+      );
   }
 
   deleteTask(boardId: string, columnId: string, taskId: string): Observable<void> {
@@ -131,11 +179,11 @@ export class HttpService {
     return this.httpClient
       .get<Board>(`boards/${id}`, this.httpOptions)
       .pipe(
-        mergeMap((board) => {
+        mergeMap((board: Board) => {
           if (board) {
             return this.httpClient.delete<void>(`boards/${id}`, this.httpOptions);
           } else {
-           throw new Error('Board was not found', { cause: 'BOARD.404' });
+            throw new Error('Board was not found', { cause: 'BOARD.404' });
           }
         }),
         catchError((error) => {
@@ -178,9 +226,9 @@ export class HttpService {
       .pipe(catchError((error) => throwError(() => this.convertError(error, 'BOARD'))));
   }
 
-  getBoards(): Observable<Board[]> {
+  getBoards(userId: string): Observable<Board[]> {
     return this.httpClient
-      .get<Board[]>('boards', this.httpOptions)
+      .get<Board[]>(`boardsSet/${userId}`, this.httpOptions)
       .pipe(catchError((error) => throwError(() => this.convertError(error, 'BOARD'))));
   }
 

@@ -1,53 +1,73 @@
-import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, moveItemInArray, Point, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
-import { mergeMap, Observable, Subscription } from 'rxjs';
-import { Column, EditTaskResult, Task, TasksColumn } from 'src/app/interfaces/app.interfaces';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+import { mergeMap, map, Observable, Subscription, pipe, tap, forkJoin } from 'rxjs';
+import { CheckItem, CheckList, Column, EditTaskResult, Task, TasksColumn } from 'src/app/interfaces/app.interfaces';
 import { AppService } from 'src/app/services/app.service';
 import { HttpService } from 'src/app/services/http/http.service';
 import { EditTaskDialogComponent } from '../edit-task-dialog/edit-task-dialog.component';
 import { EditTitleDialogComponent } from '../edit-title-dialog/edit-title-dialog.component';
 
-
 @Component({
   selector: 'app-tasks-page',
   templateUrl: './tasks-page.component.html',
-  styleUrls: ['./tasks-page.component.scss']
+  styleUrls: ['./tasks-page.component.scss'],
 })
 export class TasksPageComponent implements OnInit {
   columns: TasksColumn[] = [];
   boardId: string;
   boardTitle: string;
   createColumnSubscription: Subscription;
+  showTaskSubscription: Subscription;
 
-  constructor(private app: AppService, private http: HttpService, private route: ActivatedRoute, private dialog: MatDialog) {}
-
-  ngOnInit(): void {
-    this.boardId = this.route.snapshot.url[this.route.snapshot.url.length - 1].path;
-    this.boardTitle = this.route.snapshot.data['tasksPageData']['boardTitle'];
-    this.assignColumns(this.route.snapshot.data['tasksPageData']['tasksColumns']);
-    this.createColumnSubscription = this.app.createColumn$.subscribe({
-      next: () => {
-        this.createColumn();
-      }
-    });
-
-    this.route.params.subscribe({
-      next: (params) => {
-        const columnIndex = this.columns.findIndex((column: Column) => column._id === params['columnId']);
+  constructor(private app: AppService, private http: HttpService, private route: ActivatedRoute, private dialog: MatDialog) {
+    this.showTaskSubscription = this.app.showTask$.subscribe({
+      next: (taskData) => {
+        const boardId = this.route.snapshot.url[this.route.snapshot.url.length - 1].path;
+        if (boardId !== this.boardId) {
+          this.boardId = boardId;
+          this.boardTitle = this.route.snapshot.data['tasksPageData']['boardTitle'];
+          this.assignColumns(this.route.snapshot.data['tasksPageData']['tasksColumns']);
+        }
+        const columnIndex = this.columns.findIndex((column: Column) => column._id === taskData.columnId);
         if (columnIndex >= 0) {
-          const taskIndex = this.columns[columnIndex].tasks.findIndex((task: Task) => task._id === params['taskId']);
+          const taskIndex = this.columns[columnIndex].tasks.findIndex((task: Task) => task._id === taskData.taskId);
           if (taskIndex >= 0) {
             this.editTask(columnIndex, taskIndex);
           }
         }
       }
-    })
+    });
+
+    this.createColumnSubscription = this.app.createColumn$.subscribe({
+      next: () => {
+        this.createColumn();
+      }
+    });
+  }
+
+  ngOnInit(): void {
+    this.boardId = this.route.snapshot.url[this.route.snapshot.url.length - 1].path;
+    this.boardTitle = this.route.snapshot.data['tasksPageData']['boardTitle'];
+    this.assignColumns(this.route.snapshot.data['tasksPageData']['tasksColumns']);
+
+    // this.route.params.subscribe({
+    //   next: (params) => {
+    //     const columnIndex = this.columns.findIndex((column: Column) => column._id === params['columnId']);
+    //     if (columnIndex >= 0) {
+    //       const taskIndex = this.columns[columnIndex].tasks.findIndex((task: Task) => task._id === params['taskId']);
+    //       if (taskIndex >= 0) {
+    //         this.editTask(columnIndex, taskIndex);
+    //       }
+    //     }
+    //   }
+    // });
   }
 
   ngOnDestroy(): void {
     this.createColumnSubscription.unsubscribe();
+    this.showTaskSubscription.unsubscribe();
   }
 
   setEditMode(index: number, edit: boolean) {
@@ -55,21 +75,24 @@ export class TasksPageComponent implements OnInit {
   }
 
   createTask(columnIndex: number) {
-    this.showTaskEditDialog('NEW_TASK_DIALOG.TITLE').subscribe({
+    this.showTaskEditDialog('NEW_TASK_DIALOG.TITLE', this.boardTitle, this.columns[columnIndex].title).subscribe({
       next: (taskData: EditTaskResult) => {
         if (taskData) {
           const order = this.columns[columnIndex].tasks.length > 0 ? Math.max(...this.columns[columnIndex].tasks.map((task) => task.order)) + 1 : 0;
-          if (taskData.description.length === 0) {
-            taskData.description = ' '; // Backend reply hangs when passing empty description
-          }
-          this.http.createTask(taskData.title, taskData.description, this.boardId, this.columns[columnIndex]._id, order, this.app.user._id).subscribe({
-            next: (task: Task) => {
-              this.columns[columnIndex].tasks.push(task);
-            },
-            error: (error) => {
-              this.app.processError(error);
-            }
-          });
+          const columnId = this.columns[columnIndex]._id;
+          this.http
+            .createTask(taskData.title, taskData.description, this.boardId, columnId, order, this.app.user._id)
+            .pipe(
+              mergeMap((task: Task) => {
+                this.columns[columnIndex].tasks.push(task);
+                taskData.checkList.forEach((item) => {
+                  item.boardId = this.boardId;
+                  item.taskId = task._id;
+                });
+                return this.http.createCheckList(taskData.checkList);
+              })
+            )
+            .subscribe();
         }
       }
     });
@@ -78,28 +101,58 @@ export class TasksPageComponent implements OnInit {
   editTask(columnIndex: number, taskIndex: number) {
     const title = this.columns[columnIndex].tasks[taskIndex].title;
     const description = this.columns[columnIndex].tasks[taskIndex].description;
-    this.showTaskEditDialog('EDIT_TASK_DIALOG.TITLE', title, description).subscribe({
+    let checkList: CheckList = [];
+
+    this.http.getCheckList(this.columns[columnIndex].tasks[taskIndex]._id).pipe(
+      mergeMap((list: CheckList) => {
+        checkList = list;
+        return this.showTaskEditDialog('EDIT_TASK_DIALOG.TITLE', this.boardTitle ,this.columns[columnIndex].title, title, description, list);
+      })
+    )
+    .subscribe({
       next: (taskData: EditTaskResult) => {
-        if (taskData) {
-          if (taskData.description.length === 0) {
-            taskData.description = ' '; // Backend reply hangs when passing empty description
-          }
-          const column = this.columns[columnIndex];
-          this.http.editTask(
+        if (!taskData) {
+          return;
+        }
+
+        const newCheckList = taskData.checkList;
+        const column = this.columns[columnIndex];
+        this.http.editTask(
             taskData.title,
             taskData.description,
             this.boardId,
             column._id,
             column.tasks[taskIndex]._id,
-            column.order, this.app.user._id).subscribe({
-            next: (task: Task) => {
+            column.order,
+            this.app.user._id
+          )
+          .pipe(
+            mergeMap((task: Task) => {
+              const requestsList: Observable<any>[] = [];
               this.columns[columnIndex].tasks[taskIndex] = task;
-            },
-            error: (error) => {
-              this.app.processError(error);
-            }
-          });
-        }
+              // to edit
+              newCheckList.filter((newItem) => checkList.findIndex((item) => newItem._id === item._id && (newItem.title !== item.title || newItem.done !== item.done)) >= 0)
+              .forEach((item) => {
+                if (item._id) {
+                  requestsList.push(this.http.editCheckItem(item._id, item.title, item.done));
+                }
+              });
+              // to delete
+              checkList.filter((item) => newCheckList.findIndex((newItem) => newItem._id === item._id) === -1)
+              .forEach((item) => {
+                if (item._id) {
+                  requestsList.push(this.http.deleteCheckItem(item._id));
+                }
+              });
+              // to create
+              const newItems: CheckList = newCheckList.filter((newItem) => checkList.findIndex((item) => newItem._id === item._id) === -1);
+              newItems.forEach((item) => { item.boardId = this.boardId; item.taskId = task._id });
+              if (newItems.length > 0) {
+                requestsList.push(this.http.createCheckList(newItems));
+              }
+              return forkJoin(requestsList);
+            })
+          ).subscribe();
       }
     });
   }
@@ -121,9 +174,9 @@ export class TasksPageComponent implements OnInit {
             next: (column) => {
               this.columns.push({...column, editMode: false, tasks: []});
             },
-            error: (error) => {
-              this.app.processError(error);
-            }
+            // error: (error) => {
+            //   this.app.processError(error);
+            // }
           });
         }
       }
@@ -133,11 +186,11 @@ export class TasksPageComponent implements OnInit {
   editColumnTitle(title: string, index: number): void {
     this.http.editColumn(title, this.columns[index].order, this.columns[index].boardId, this.columns[index]._id).subscribe({
       next: (column) => {
-        // this.columns.push({...column, editMode: false, tasks: []});
+        this.columns[index].title = column.title;
       },
-      error: (error) => {
-        this.app.processError(error);
-      }
+      // error: (error) => {
+      //   this.app.processError(error);
+      // }
     });
   }
 
@@ -146,14 +199,24 @@ export class TasksPageComponent implements OnInit {
     return dialogRef.afterClosed();
   }
 
-  showTaskEditDialog(dialogTitle: string, title: string = '', description: string = ''): Observable<EditTaskResult> {
+  showTaskEditDialog(
+    dialogTitle: string,
+    boardTitle: string,
+    columnTitle: string,
+    title: string = '',
+    description: string = '',
+    checkList: CheckList = []
+  ): Observable<EditTaskResult> {
     const data = {
       data: {
         dialogTitle,
+        boardTitle,
+        columnTitle,
         title,
         titlePlaceholder: 'INPUTS.PLACEHOLDERS.TASK_TITLE',
         description,
         descriptionPlaceholder: 'INPUTS.PLACEHOLDERS.TASK_DESCRIPTION',
+        checkList,
       }
     };
     const dialogRef = this.dialog.open(EditTaskDialogComponent, data);
@@ -173,9 +236,9 @@ export class TasksPageComponent implements OnInit {
       next: () => {
         this.columns.splice(columnIndex, 1);
       },
-      error: (error) => {
-        this.app.processError(error);
-      }
+      // error: (error) => {
+      //   this.app.processError(error);
+      // }
     });
     event.stopPropagation();
   }
@@ -195,27 +258,33 @@ export class TasksPageComponent implements OnInit {
       next: () => {
         this.columns[columnIndex].tasks.splice(taskIndex, 1);
       },
-      error: (error) => {
-        this.app.processError(error);
-      }
+      // error: (error) => {
+      //   this.app.processError(error);
+      // }
     });
     event.stopPropagation();
   }
 
   dropColumn(event: CdkDragDrop<Column[]>): void {
+    if (event.previousIndex === event.currentIndex) {
+      return;
+    }
     moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
     this.columns.forEach((column, index) => column.order = index);
     this.http.updateColumnsOrder(this.columns).subscribe({
       // next: (newColumns) => this.assignColumns(newColumns),
-      error: (error) => {
-        this.app.processError(error);
-      }
+      // error: (error) => {
+      //   this.app.processError(error);
+      // }
     });
   }
 
   dropTask(event: CdkDragDrop<TasksColumn>) {
     let updateTasksList: Task[];
     if (event.previousContainer === event.container) {
+      if (event.previousIndex === event.currentIndex) {
+        return;
+      }
       moveItemInArray(event.container.data.tasks, event.previousIndex, event.currentIndex);
       event.container.data.tasks.forEach((task, index) => task.order = index);
       updateTasksList = event.container.data.tasks;
@@ -233,11 +302,14 @@ export class TasksPageComponent implements OnInit {
       currentColumn.tasks.forEach((task, index) => task.order = index);
       updateTasksList = [...previousColumn.tasks, ...currentColumn.tasks];
     }
-    this.http.updateTasksOrder(updateTasksList).subscribe({
-      // next: (newColumns) => this.assignColumns(newColumns),
-      error: (error) => {
-        this.app.processError(error);
-      }
-    });
+    this.http.updateTasksOrder(updateTasksList).subscribe();
+  }
+
+  columnTitleOnEnterKey(title: string, columnIndex: number) {
+    if (title.length === 0) {
+      return;
+    }
+    this.setEditMode(columnIndex, false);
+    this.editColumnTitle(title, columnIndex);
   }
 }

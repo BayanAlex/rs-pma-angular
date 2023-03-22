@@ -23,7 +23,9 @@ export class TasksService {
       }),
       mergeMap((tasks: Task[]) => {
         tasks.forEach((task) => {
-          task.description = task.description.trim();
+          if (task.description === ' ') {
+            task.description = '';
+          }
           const column = tasksPageData.tasksColumns.find((column) => column._id === task.columnId);
           if (column) {
             column.tasks.push(task);
@@ -35,13 +37,9 @@ export class TasksService {
         tasksPageData.boardTitle = board.title;
         return tasksPageData;
       }),
-      catchError((error) => {
-        this.app.processError(error);
-        if (this.app.isLoggedIn) {
-          this.app.gotoPage('/boards');
-        }
-        return throwError(() => error);
-      })
+      // catchError((error) => {
+      //   return throwError(() => error);
+      // })
     );
   }
 }

@@ -52,7 +52,7 @@
       "SIGNUP": "Sign Up",
       "LOGIN": "Login",
       "LOGOUT": "Logout",
-      "PROFILE_PAGE": "Edit profile",
+      "PROFILE_PAGE": "Profile",
       "LANGUAGES": "Language",
       "BOARDS": "Boards",
       "NEW_COLUMN": "New column",
@@ -130,7 +130,12 @@
     "TITLE": "New task"
   },
   "EDIT_TASK_DIALOG": {
-    "TITLE": "Edit task"
+    "TITLE": "Edit task",
+    "BOARD_TITLE": "Board",
+    "COLUMN_TITLE": "Column",
+    "CHECKLIST_CAPTION": "Checklist",
+    "ADD_CHECK_TOOLTIP": "Add item",
+    "DELETE_CHECK_TOOLTIP": "Delete"
   },
   "LOGOUT": {
     "TEXT": "Do you really want to logout?",
@@ -162,7 +167,11 @@
     },
     "TASK": {
       "400": "Bad Request",
-      "404": "Column was not found"
+      "404": "Task was not found"
+    },
+    "POINT": {
+      "400": "Bad Request",
+      "404": "Point was not found"
     },
     "TOKEN": "Session timeout. Please login"
   },

@@ -1,1 +1,1 @@
-div[mat-dialog-actions]{display:flex;justify-content:center;gap:20px;padding:20px !important}
+div[mat-dialog-actions]{display:flex;justify-content:center;gap:20px;padding:20px !important}.check-item-title{border-bottom:1px solid rgba(0,0,0,0)}.check-item-title:focus-visible{outline:unset;border-bottom-color:#000}.check-item-title:not(:focus-visible).ng-invalid[required]{border-bottom-color:red}

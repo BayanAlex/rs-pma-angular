@@ -27,11 +27,12 @@ export class SignUpPageComponent {
     )
     .subscribe({
       next: () => {
-        this.pendingRequest = false;
+        // this.pendingRequest = false;
       },
       error: (error) => {
         this.pendingRequest = false;
-        this.app.processError(error);
+        // this.app.processError(error);
+        throw error;
       }
     });
   }

@@ -26,7 +26,8 @@ export class ProfilePageComponent implements OnInit {
           next: () => this.pendingRequest = false,
           error: (error) => {
             this.pendingRequest = false;
-            this.app.processError(error);
+            // this.app.processError(error);
+            throw error;
           }
         });
       }
@@ -43,7 +44,8 @@ export class ProfilePageComponent implements OnInit {
       },
       error: (error) => {
         this.pendingRequest = false;
-        this.app.processError(error);
+        // this.app.processError(error);
+        throw error;
       }
     });
   }

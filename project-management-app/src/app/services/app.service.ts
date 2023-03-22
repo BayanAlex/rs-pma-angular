@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { HttpService } from './http/http.service';
 import { AuthData } from 'src/app/interfaces/http.interfaces';
 import { User } from 'src/app/interfaces/app.interfaces';
-import { Observable, Subscriber, throwError, Subject, share, connect } from 'rxjs';
+import { Observable, Subscription, throwError, Subject, share, connect } from 'rxjs';
 import { catchError, tap, map, mergeMap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
@@ -21,12 +21,17 @@ export class AppService {
   public userData$ = new Subject<User>();
   public createBoard$ = new Subject<void>();
   public createColumn$ = new Subject<void>();
+  public showTask$ = new Subject<{ columnId: string, taskId: string }>();
   // public createBoard$ = this.createBoardSubject$.asObservable();
 
   constructor(private router: Router, private http: HttpService, public translate: TranslateService, private snackBar: MatSnackBar, private dialog: MatDialog) {
     const lang = localStorage.getItem('lang');
     lang !== null ? this.setLanguage(+lang) : this.setLanguage(0);
     this.updateUserData();
+  }
+
+  showTask(columnId: string, taskId: string): void {
+    this.showTask$.next({ columnId, taskId });
   }
 
   createBoard(): void {
@@ -54,6 +59,7 @@ export class AppService {
     if (token && id) {
       this.loginState = true;
       this.http.token = token;
+      this.user._id = id;
       this.http.getUser(id).subscribe({
         next: (user) => {
           this.user = user;
@@ -81,6 +87,7 @@ export class AppService {
   logout(gotoUrl?: string): void {
     this.isLoggedIn = false;
     this.user._id = '';
+    localStorage.removeItem('id');
     this.http.logout();
     if (gotoUrl) {
       this.gotoPage(gotoUrl);
@@ -91,13 +98,18 @@ export class AppService {
     return this.http.login(data)
       .pipe(
         map(() => {
+          const subscription: Subscription = this.userData$.subscribe({
+            next: () => {
+              this.gotoPage('/boards');
+              subscription.unsubscribe();
+            },
+          });
           this.updateUserData();
           this.isLoggedIn = true;
-          this.gotoPage('/boards');
         }),
-        catchError((error) => {
-          return throwError(() => error);
-        })
+        // catchError((error) => {
+        //   return throwError(() => error);
+        // })
       )
   }
 
@@ -107,9 +119,9 @@ export class AppService {
         map(() => {
           this.logout('/');
         }),
-        catchError((error) => {
-          return throwError(() => error);
-        })
+        // catchError((error) => {
+        //   return throwError(() => error);
+        // })
       )
   }
 
@@ -131,7 +143,7 @@ export class AppService {
   }
 
   showSnackBar(text: string, buttonCaption: string): void {
-    this.snackBar.open(text, buttonCaption, { verticalPosition: 'top', panelClass: 'snack-bar' })
+    this.snackBar.open(text, buttonCaption, { verticalPosition: 'top', horizontalPosition: 'center', panelClass: 'snack-bar' })
   }
 
   showMessage(text: string, buttonCaption = 'DIALOG_BUTTONS.CLOSE'): void {

@@ -1,6 +1,6 @@
 import { inject, NgModule } from '@angular/core';
 import { ActivatedRouteSnapshot, ResolveFn, RouterModule, RouterStateSnapshot, Routes } from '@angular/router';
-import { catchError, mergeMap, throwError } from 'rxjs';
+import { catchError, mergeMap, of, tap, throwError } from 'rxjs';
 import { BoardsPageComponent } from './components/boards-page/boards-page.component';
 import { LoginPageComponent } from './components/login-page/login-page.component';
 import { NotFoundPageComponent } from './components/not-found-page/not-found-page.component';
@@ -16,20 +16,26 @@ import { TasksService } from './services/tasks.service';
 
 const resolveBoards: ResolveFn<Board[]> = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
   const boardsService = inject(BoardsService);
+  const app = inject(AppService);
   return boardsService.getBoards().pipe(
-    catchError((error) => {
-      return throwError(() => error)
+    catchError((error, caught) => {
+      app.processError(error);
+      app.gotoPage('/');
+      return caught;
     })
   );
 };
 
 const resolveColumns: ResolveFn<TasksPageData> = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
   const tasksService = inject(TasksService);
+  const app = inject(AppService);
   const boardId = route.url[route.url.length - 1].path;
   return tasksService
     .getColumns(boardId).pipe(
-      catchError((error) => {
-        return throwError(() => error)
+      catchError((error, caught) => {
+        app.processError(error);
+        app.gotoPage('/');
+        return caught;
       })
     );
 };
@@ -41,6 +47,7 @@ const routes: Routes = [
   { path: 'profile', component: ProfilePageComponent, canActivate: [isLoggedInGuard] },
   { path: 'boards', component: BoardsPageComponent, resolve: { boards: resolveBoards }, canActivate: [isLoggedInGuard] },
   { path: 'boards/:id', component: TasksPageComponent, resolve: { tasksPageData: resolveColumns }, canActivate: [isLoggedInGuard] },
+  // { path: 'boards/:id', loadComponent: () => import('../app/components/tasks-page/tasks-page.component').then((mod) => mod.TasksPageComponent), resolve: { tasksPageData: resolveColumns }, canActivate: [isLoggedInGuard], runGuardsAndResolvers: 'always' },
   { path: '**', component: NotFoundPageComponent }
 ];
 

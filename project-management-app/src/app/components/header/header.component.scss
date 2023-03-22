@@ -1,3 +1,5 @@
+@import '../../../assets/styles/mixin.scss';
+
 @media screen and (min-width: 600px) {
   .button-search-hide {
     display: none;
@@ -47,11 +49,13 @@
     max-width: 350px;
     transition: all 0.5s ease;
     margin-left: 10px;
+    background-color: $page-bg-color;
+    transition: all 0.5s ease;
 
-    // &:focus {
-    //   max-width: 350px;
-    //   transition: all 0.5s ease;
-    // }
+    &:focus {
+      background-color: #fff;
+      transition: all 0.5s ease;
+    }
   }
 
   mat-nav-list {
@@ -78,4 +82,8 @@
 .full-width {
   width: 100% !important;
   max-width: 100% !important;
+}
+
+.mat-mdc-menu-item[disabled] {
+  opacity: 1 !important;
 }

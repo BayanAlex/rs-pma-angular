@@ -1,10 +1,44 @@
-mat-toolbar {
-    padding-top: 20px;
-    padding-bottom: 20px;
+:host {
 }
 
+mat-toolbar {
+  height: auto;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.footer-content {
+  display: grid;
+  gap: 20px;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  height: auto;
+  justify-items: center;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+}
+
+
 @media screen and (max-width: 599px) {
-    mat-toolbar {
-        flex-direction: column;
+  .footer-content {
+    grid-template-areas: 'author rs'
+                         'date rs';
+    row-gap: 0;
+
+    .name {
+      grid-area: author;
     }
+
+    .date {
+      grid-area: date;
+    }
+
+    .rs {
+      grid-area: rs;
+    }
+  }
 }

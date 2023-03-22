@@ -42,15 +42,19 @@ export interface EditTitleData {
 
 export interface EditTaskData {
   dialogTitle: string,
+  boardTitle: string,
+  columnTitle: string,
   title: string,
   titlePlaceholder: string,
   description: string,
   descriptionPlaceholder: string,
+  checkList: CheckList,
 }
 
 export interface EditTaskResult {
   title: string,
   description: string,
+  checkList: CheckList,
 }
 
 export interface Board {
@@ -93,3 +97,13 @@ export interface Task {
   userId: string,
   users: string[],
 }
+
+export interface CheckItem {
+  _id?: string,
+  title: string,
+  boardId: string,
+  taskId: string,
+  done: boolean,
+}
+
+export type CheckList = CheckItem[]

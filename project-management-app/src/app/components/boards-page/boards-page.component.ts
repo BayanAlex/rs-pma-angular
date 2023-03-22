@@ -24,9 +24,10 @@ export class BoardsPageComponent implements OnInit, OnDestroy {
       next: (data) => {
         this.boards = data['boards'];
       },
-      error: (error) => {
-        this.app.processError(error);
-      }
+      // error: (error) => {
+      //   console.log('boards page init');
+      //   this.app.processError(error);
+      // }
     });
 
     this.createBoardSubscription = this.app.createBoard$.subscribe({
@@ -49,13 +50,13 @@ export class BoardsPageComponent implements OnInit, OnDestroy {
     this.showEditDialog('NEW_BOARD_DIALOG.TITLE', '').subscribe({
       next: (result) => {
         if (result) {
-          this.http.createBoard(result, this.app.user.login).subscribe({
+          this.http.createBoard(result, this.app.user._id).subscribe({
             next: (board) => {
               this.boards.push(board);
             },
-            error: (error) => {
-              this.app.processError(error);
-            }
+            // error: (error) => {
+            //   this.app.processError(error);
+            // }
           });
         }
       }
@@ -68,9 +69,9 @@ export class BoardsPageComponent implements OnInit, OnDestroy {
         const index = this.boards.findIndex((board) => board._id === id);
         this.boards.splice(index, 1);
       },
-      error: (error) => {
-        this.app.processError(error);
-      }
+      // error: (error) => {
+      //   this.app.processError(error);
+      // }
     })
   }
 
@@ -80,13 +81,13 @@ export class BoardsPageComponent implements OnInit, OnDestroy {
     this.showEditDialog('EDIT_BOARD_DIALOG.TITLE', title).subscribe({
       next: (newTitle) => {
         if (newTitle) {
-          this.http.editBoard(id, newTitle, this.app.user.login).subscribe({
+          this.http.editBoard(id, newTitle, this.app.user._id).subscribe({
             next: (board) => {
               this.boards[index].title = board.title;
             },
-            error: (error) => {
-              this.app.processError(error);
-            }
+            // error: (error) => {
+            //   this.app.processError(error);
+            // }
           });
         }
       }

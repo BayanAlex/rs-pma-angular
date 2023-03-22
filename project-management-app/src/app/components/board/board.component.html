@@ -1,11 +1,25 @@
-<mat-card [routerLink]="['/boards', id]" class="block h-[200px] w-full cursor-pointer">
-  <mat-card-header>
-    <div class="w-full flex justify-between">
-      <button mat-icon-button color="primary" (click)="editClick($event)" [matTooltip]="'BOARDS_PAGE.EDIT_TOOLTIP' | translate"><mat-icon>edit</mat-icon></button>
-      <button mat-icon-button color="warn" (click)="deleteClick($event)" [matTooltip]="'BOARDS_PAGE.DELETE_TOOLTIP' | translate"><mat-icon>delete</mat-icon></button>
-    </div>
+<mat-card [routerLink]="['/boards', id]" class="block h-[210px] w-full cursor-pointer overflow-hidden">
+  <mat-card-header class="!p-0">
+    <mat-toolbar color="primary" class="h-fit justify-between !py-[5px] !px-[12px]">
+      <button
+        mat-icon-button
+        onclick="this.blur()"
+        (click)="editClick($event)"
+        [matTooltip]="'BOARDS_PAGE.EDIT_TOOLTIP' | translate"
+      >
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        onclick="this.blur()"
+        (click)="deleteClick($event)"
+        [matTooltip]="'BOARDS_PAGE.DELETE_TOOLTIP' | translate"
+      >
+        <mat-icon>delete_forever</mat-icon>
+      </button>
+    </mat-toolbar>
   </mat-card-header>
-  <mat-card-content class="justify-center items-center h-full">
-    <h3 class="whitespace-normal text-center overflow-auto">{{ title }}</h3>
+  <mat-card-content class="!flex justify-center items-center h-full">
+    <h3 class="whitespace-normal text-center overflow-auto !text-lg !font-medium">{{ title }}</h3>
   </mat-card-content>
 </mat-card>

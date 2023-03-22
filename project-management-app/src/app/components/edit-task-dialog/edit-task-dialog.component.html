@@ -1,15 +1,69 @@
-<h1 mat-dialog-title class="text-center">{{ data.dialogTitle | translate }}</h1>
+<h1 mat-dialog-title class="text-center !mb-0">{{ data.dialogTitle | translate }}</h1>
 <div mat-dialog-content>
-  <mat-form-field appearance="fill" hideRequiredMarker class="w-full">
-    <mat-label>{{ data.titlePlaceholder | translate }}:</mat-label>
-    <input matInput [(ngModel)]="data.title" #titleInput>
-  </mat-form-field>
-  <mat-form-field appearance="fill" hideRequiredMarker class="w-full">
-    <mat-label>{{ data.descriptionPlaceholder | translate }}:</mat-label>
-    <textarea matInput [(ngModel)]="data.description" #descriptionInput></textarea>
-  </mat-form-field>
+  <div class="grid grid-cols-2 grid-rows-2 items-center justify-items-center mb-2">
+    <div class="text-sm">{{ 'EDIT_TASK_DIALOG.BOARD_TITLE' | translate }}</div>
+    <div class="text-sm">{{ 'EDIT_TASK_DIALOG.COLUMN_TITLE' | translate }}</div>
+    <div class="text-black">{{ data.boardTitle }}</div>
+    <div class="text-black">{{ data.columnTitle }}</div>
+  </div>
+
+  <form #form="ngForm">
+    <mat-form-field appearance="fill" hideRequiredMarker class="task-input w-full">
+      <mat-label>{{ data.titlePlaceholder | translate }}:</mat-label>
+      <input matInput required [(ngModel)]="data.title" #titleInput name="taskTitle" (focus)="focus($event)">
+    </mat-form-field>
+    <mat-form-field appearance="fill" hideRequiredMarker class="task-input w-full">
+      <mat-label>{{ data.descriptionPlaceholder | translate }}:</mat-label>
+      <textarea matInput [(ngModel)]="data.description" #descriptionInput name="taskDescription"></textarea>
+    </mat-form-field>
+
+    <div class="flex items-center w-full justify-center gap-[10px] pr-[58px] mt-[5px]">
+      <button
+        mat-icon-button
+        [matTooltip]="'EDIT_TASK_DIALOG.ADD_CHECK_TOOLTIP' | translate"
+        [matTooltipShowDelay]="500"
+        (click)="addCheckItem()"
+        onclick="this.blur()"
+      >
+        <mat-icon>add_task</mat-icon>
+      </button>
+      <div matListItemTitle>{{ 'EDIT_TASK_DIALOG.CHECKLIST_CAPTION' | translate }}</div>
+    </div>
+    <ul>
+      <ng-container *ngFor="let checkItem of checkList; let index = index">
+      <li class="flex items-center gap-[5px]">
+        <mat-checkbox #checkBox [(ngModel)]="checkItem.done" [name]="'checkBox' + index"></mat-checkbox>
+        <input
+          matInput
+          required
+          [(ngModel)]="checkItem.title"
+          [name]="'checkItemTitle' + index"
+          #checkItemTitle
+          [ngClass]="{ 'line-through text-gray-500': checkBox.checked}"
+          class="check-item-title flex-auto w-full p-[5px] text-black"
+        >
+        <button
+          mat-icon-button
+          [matTooltip]="'EDIT_TASK_DIALOG.DELETE_CHECK_TOOLTIP' | translate"
+          [matTooltipShowDelay]="500"
+          (click)="deleteCheckItem(index)"
+          onclick="this.blur()"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </li>
+      <mat-divider></mat-divider>
+      </ng-container>
+    </ul>
+  </form>
 </div>
 <div mat-dialog-actions>
-  <button mat-raised-button [mat-dialog-close]="{ title: data.title, description: data.description }" [disabled]="!data.title ? true : null">{{ 'DIALOG_BUTTONS.OK' | translate }}</button>
+  <button
+    mat-raised-button
+    [mat-dialog-close]="{ title: data.title, description: data.description, checkList }"
+    [disabled]="!form.valid ? true : null"
+  >
+    {{ 'DIALOG_BUTTONS.OK' | translate }}
+  </button>
   <button mat-raised-button (click)="onCancelClick()">{{ 'DIALOG_BUTTONS.CANCEL' | translate }}</button>
 </div>

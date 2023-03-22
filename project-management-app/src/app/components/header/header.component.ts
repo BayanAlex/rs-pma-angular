@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Task } from 'src/app/interfaces/app.interfaces';
 import { AppService } from 'src/app/services/app.service';
@@ -16,18 +16,25 @@ export class HeaderComponent implements OnInit {
   searchTimer: ReturnType<typeof setTimeout>;
   searchResults: Task[] = [];
   searchFormControl = new FormControl('');
-  @ViewChild("searchInput") searchInput: ElementRef;
+  darkMode = false;
+  @ViewChild('searchInput') searchInput: ElementRef;
 
-  constructor (public translate: TranslateService, public app: AppService, private http: HttpService, public router: Router) {}
+  constructor (public translate: TranslateService, public app: AppService, public http: HttpService, public router: Router, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
 
   }
 
+  switchMode() {
+    this.darkMode = !this.darkMode;
+  }
+
   searchItemSelected(index: number) {
     const task = this.searchResults[index];
-    this.router.navigate(['boards', task.boardId, { columnId: task.columnId, taskId: task._id }]);
-    this.searchResults = [];
+    this.router.navigate(['/boards', task.boardId]).then(() => {
+      this.app.showTask(task.columnId, task._id);
+      this.searchResults = [];
+    });
   }
 
   toggleSearchMode() {
@@ -62,13 +69,13 @@ export class HeaderComponent implements OnInit {
   }
 
   searchTask(value: string) {
-    this.http.searchTask(value).subscribe({
+    this.http.searchTask(value, this.app.user._id).subscribe({
       next: (tasks: Task[]) => {
         this.searchResults = tasks;
       },
-      error: (error) => {
-        this.app.processError(error);
-      }
+      // error: (error) => {
+      //   this.app.processError(error);
+      // }
     });
   }
 
