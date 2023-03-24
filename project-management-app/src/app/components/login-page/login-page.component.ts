@@ -1,5 +1,4 @@
 import { Component, Output } from '@angular/core';
-import { throwError } from 'rxjs';
 import { AuthData } from 'src/app/interfaces/http.interfaces';
 import { AppService } from 'src/app/services/app.service';
 
@@ -14,16 +13,13 @@ export class LoginPageComponent {
 
   constructor(private app: AppService) { }
 
-  login(data: AuthData) {
+  login(data: AuthData): void {
     delete data.name;
     this.pendingRequest = true;
     this.app.login(data).subscribe({
-      next: () => {
-        // this.pendingRequest = false;
-      },
+      next: () => {},
       error: (error) => {
         this.pendingRequest = false;
-        // this.app.processError(error);
         throw error;
       }
     });

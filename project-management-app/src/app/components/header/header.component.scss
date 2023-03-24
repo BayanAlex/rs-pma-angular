@@ -1,4 +1,4 @@
-@import '../../../assets/styles/mixin.scss';
+@import 'mixin';
 
 @media screen and (min-width: 600px) {
   .button-search-hide {
@@ -42,7 +42,6 @@
   flex-grow: 1;
   display: flex;
   justify-content: center;
-  // max-width: 300px;
 
   input {
     width: 100%;

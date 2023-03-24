@@ -1,4 +1,4 @@
-import { Component, OnInit, Output } from '@angular/core';
+import { Component, Output } from '@angular/core';
 import { HttpService } from 'src/app/services/http/http.service';
 import { AuthData } from 'src/app/interfaces/http.interfaces';
 import { AppService } from 'src/app/services/app.service';
@@ -9,16 +9,12 @@ import { AppService } from 'src/app/services/app.service';
   templateUrl: './profile-page.component.html',
   styleUrls: ['./profile-page.component.scss']
 })
-export class ProfilePageComponent implements OnInit {
+export class ProfilePageComponent {
   @Output() pendingRequest = false;
 
   constructor(private http: HttpService, private app: AppService) { }
 
-  ngOnInit() {
-
-  }
-
-  deleteAccount() {
+  deleteAccount(): void {
     this.app.showConfirmDialog('PROFILE_PAGE.DELETE_CONFIRM_TEXT', 'PROFILE_PAGE.DELETE_CONFIRM_TITLE').subscribe((confirm) => {
       if (confirm) {
         this.pendingRequest = true;
@@ -26,7 +22,6 @@ export class ProfilePageComponent implements OnInit {
           next: () => this.pendingRequest = false,
           error: (error) => {
             this.pendingRequest = false;
-            // this.app.processError(error);
             throw error;
           }
         });
@@ -34,7 +29,7 @@ export class ProfilePageComponent implements OnInit {
     });
   }
 
-  saveProfile(data: AuthData) {
+  saveProfile(data: AuthData): void {
     this.pendingRequest = true;
     this.http.saveProfile(this.app.user._id, data).subscribe({
       next: (user) => {
@@ -44,7 +39,6 @@ export class ProfilePageComponent implements OnInit {
       },
       error: (error) => {
         this.pendingRequest = false;
-        // this.app.processError(error);
         throw error;
       }
     });

@@ -10,7 +10,6 @@
 </div>
 <div class="columns-wrap">
   <div cdkDropList cdkDropListOrientation="horizontal" class="columns" (cdkDropListDropped)="dropColumn($event)" cdkDropListGroup [cdkDropListAutoScrollDisabled]="false">
-    <!-- <mat-card *ngFor="let column of columns; let columnIndex = index" class="column" cdkDragLockAxis="x" cdkDrag> -->
     <div *ngFor="let column of columns; let columnIndex = index" class="column" class="card-wrap">
       <mat-card cdkDragLockAxis="x" cdkDrag class="overflow-hidden">
         <mat-card-header class="!p-0 mb-[7px]">

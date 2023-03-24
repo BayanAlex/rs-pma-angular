@@ -23,11 +23,7 @@ export class BoardsPageComponent implements OnInit, OnDestroy {
     this.route.data.subscribe({
       next: (data) => {
         this.boards = data['boards'];
-      },
-      // error: (error) => {
-      //   console.log('boards page init');
-      //   this.app.processError(error);
-      // }
+      }
     });
 
     this.createBoardSubscription = this.app.createBoard$.subscribe({
@@ -53,10 +49,7 @@ export class BoardsPageComponent implements OnInit, OnDestroy {
           this.http.createBoard(result, this.app.user._id).subscribe({
             next: (board) => {
               this.boards.push(board);
-            },
-            // error: (error) => {
-            //   this.app.processError(error);
-            // }
+            }
           });
         }
       }
@@ -68,10 +61,7 @@ export class BoardsPageComponent implements OnInit, OnDestroy {
       next: () => {
         const index = this.boards.findIndex((board) => board._id === id);
         this.boards.splice(index, 1);
-      },
-      // error: (error) => {
-      //   this.app.processError(error);
-      // }
+      }
     })
   }
 
@@ -84,10 +74,7 @@ export class BoardsPageComponent implements OnInit, OnDestroy {
           this.http.editBoard(id, newTitle, this.app.user._id).subscribe({
             next: (board) => {
               this.boards[index].title = board.title;
-            },
-            // error: (error) => {
-            //   this.app.processError(error);
-            // }
+            }
           });
         }
       }

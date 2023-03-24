@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { catchError, map, mergeMap, Observable, throwError } from 'rxjs';
-import { Board, Column, Task, TasksColumn, TasksPageData } from '../interfaces/app.interfaces';
+import { map, mergeMap, Observable } from 'rxjs';
+import { Board, Column, Task, TasksColumn, TasksPageData } from 'src/app/interfaces/app.interfaces';
 import { AppService } from './app.service';
 import { HttpService } from './http/http.service';
 
@@ -36,10 +36,7 @@ export class TasksService {
       map((board: Board) => {
         tasksPageData.boardTitle = board.title;
         return tasksPageData;
-      }),
-      // catchError((error) => {
-      //   return throwError(() => error);
-      // })
+      })
     );
   }
 }

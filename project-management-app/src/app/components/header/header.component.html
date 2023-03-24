@@ -1,7 +1,6 @@
 <mat-toolbar color="primary" class="justify-between items-center h-20">
-  <a mat-button [routerLink]="['/']" class="text-2xl">PMA</a>
+  <a [routerLink]="['/']" class="ml-[5px]"><img class="h-[35px]" src="/assets/images/logo.svg" alt=""></a>
   <div class="flex items-center justify-end gap-[10px] w-full">
-    <!-- <mat-form-field> -->
     <form class="search-block" [ngClass]="{ 'search-block-w-full': searchMode }">
       <input matInput
         type="search"
@@ -14,12 +13,6 @@
         [placeholder]="'INPUTS.PLACEHOLDERS.SEARCH' | translate"
         (input)="onSearchInputChange($event)"
       />
-      <!-- <mat-nav-list *ngIf="searchResults.length > 0">
-        <mat-list-item *ngFor="let task of searchResults">
-          <span matListItemTitle>{{ task.title }}</span>
-          <span matListItemLine>{{ task.description }}</span>
-        </mat-list-item>
-      </mat-nav-list> -->
       <mat-autocomplete #auto="matAutocomplete">
         <ng-container *ngFor="let task of searchResults; let index = index">
           <mat-option class="max-w-full w-full" (click)="searchItemSelected(index)">
@@ -32,8 +25,6 @@
         </ng-container>
       </mat-autocomplete>
     </form >
-      <!-- <mat-icon matPrefix color="primary">search</mat-icon>
-    </mat-form-field> -->
     <button
       mat-mini-fab
       color="primary"
@@ -82,13 +73,6 @@
           {{ lang | uppercase }}
         </mat-button-toggle>
       </mat-button-toggle-group>
-      <!-- <button
-        mat-mini-fab color="primary"
-        onclick="this.blur()"
-        (click)="switchMode()"
-        [matTooltip]="'HEADER.BUTTON.MODE' | translate">
-        <mat-icon>{{ darkMode ? 'light_mode' : 'dark_mode' }}</mat-icon>
-      </button> -->
     </ng-container>
     <button mat-button *ngIf="!app.isLoggedIn" (click)="app.openSignUpPage()" class="signup">{{ 'HEADER.BUTTON.SIGNUP' | translate }}</button>
     <button mat-raised-button *ngIf="!app.isLoggedIn" (click)="auth()" class="login" color="accent">{{ 'HEADER.BUTTON.LOGIN' | translate }}</button>
@@ -102,7 +86,6 @@
         <mat-icon>manage_accounts</mat-icon>
         {{ 'HEADER.BUTTON.PROFILE_PAGE' | translate }}
       </button>
-      <!-- <mat-divider *ngIf="app.isLoggedIn"></mat-divider> -->
       <button mat-menu-item *ngIf="!app.isLoggedIn" (click)="app.openSignUpPage()">
         <mat-icon>how_to_reg</mat-icon>
         {{ 'HEADER.BUTTON.SIGNUP' | translate }}
@@ -124,13 +107,6 @@
           <mat-radio-button [checked]="lang === translate.currentLang" [value]="i">{{ 'LANGUAGES.' + (lang | uppercase) | translate }}</mat-radio-button>
         </button>
       </mat-radio-group>
-      <!-- <button
-        mat-menu-item
-        *ngFor="let lang of app.langList; let i = index"
-        (click)="app.setLanguage(i)"
-      >
-        <mat-checkbox [checked]="lang === translate.currentLang">{{ 'LANGUAGES.' + (lang | uppercase) | translate }}</mat-checkbox>
-      </button> -->
     </mat-menu>
 
     <button mat-icon-button [ngClass]="{ 'hide': searchMode, 'menu-button-hide': !app.isLoggedIn}" aria-label="Menu" [matMenuTriggerFor]="appMenu">

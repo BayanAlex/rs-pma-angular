@@ -1,1 +1,47 @@
-<p>welcome-page works!</p>
+<div class="sections">
+  <section class="section section-dev">
+    <div class="section-dev-content">
+      <img src="/assets/images/alex-bmw.svg" alt="" class="section-dev-img">
+      <h1 class="section-dev-caption">{{ 'WELCOME_PAGE.TITLE' | translate }}</h1>
+      <p class="section-dev-text whitespace-pre-wrap">{{ 'WELCOME_PAGE.DEV.TEXT' | translate }}</p>
+      <div class="section-dev-skills">
+        <h2>{{ 'WELCOME_PAGE.DEV.SKILLS.TITLE' | translate }}</h2>
+        <ul class="skills-list">
+          <li class="skills-list-item" *ngFor="let i of skillsList"><mat-icon color="primary">check</mat-icon>{{ 'WELCOME_PAGE.DEV.SKILLS.' + i | translate }}</li>
+        </ul>
+      </div>
+      <a mat-raised-button color="accent" class="section-dev-more" target="_blank" href="https://bayanalex.github.io/rsschool-cv/">{{ 'WELCOME_PAGE.DEV.MORE_INFO' | translate }}</a>
+    </div>
+  </section>
+
+  <section class="section section-pma">
+    <div class="section-pma-content section-content">
+      <div class="section-pma-text">
+        <h2 class="text-right">{{ 'WELCOME_PAGE.PMA.TITLE' | translate }}</h2>
+        <p class="text-right whitespace-pre-wrap">{{ 'WELCOME_PAGE.PMA.TEXT' | translate }}</p>
+      </div>
+      <img src="/assets/images/dev.svg" alt="" class="section-pma-img">
+    </div>
+  </section>
+
+  <section class="section section-powered">
+    <div class="section-powered-content">
+      <h2 class="text-center">{{ 'WELCOME_PAGE.TECH.TITLE' | translate }}</h2>
+      <ul class="tech-list">
+        <li *ngFor="let tech of techList" class="tech-list-item"><span>{{ tech.value }}</span><img [src]="'/assets/icons/' + tech.src"></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section-course">
+    <div class="section-course-content section-content">
+      <img src="/assets/images/school.svg" alt="" class="section-course-img">
+      <div class="section-course-text [&>p]:whitespace-pre-wrap">
+        <h2>{{ 'WELCOME_PAGE.COURSE.TITLE' | translate }}</h2>
+        <p>{{ 'WELCOME_PAGE.COURSE.TEXT1' | translate }}</p>
+        <p>{{ 'WELCOME_PAGE.COURSE.TEXT2' | translate }}</p>
+        <p>{{ 'WELCOME_PAGE.COURSE.TEXT3' | translate }}</p>
+      </div>
+    </div>
+  </section>
+</div>

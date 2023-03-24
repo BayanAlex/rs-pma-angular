@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
-import { Observable, throwError, from, forkJoin } from 'rxjs';
+import { Observable, throwError, forkJoin } from 'rxjs';
 import { AuthData, LoginResponse } from 'src/app/interfaces/http.interfaces';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { User, Board, Column, Task, TaskOrderRequest, CheckList, CheckItem } from 'src/app/interfaces/app.interfaces';
@@ -283,15 +283,15 @@ export class HttpService {
       .pipe(catchError((error) => throwError(() => this.convertError(error, 'DELETE_USER'))));
   }
 
-  get baseUrl() {
+  get baseUrl(): string {
     return this.serverUrl;
   }
 
-  getAuthorizationToken() {
+  getAuthorizationToken(): string {
     return this.token;
   }
 
-  logout() {
+  logout(): void {
     this.token = '';
     localStorage.removeItem('token');
   }

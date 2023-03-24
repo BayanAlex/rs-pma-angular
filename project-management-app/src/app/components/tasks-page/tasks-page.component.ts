@@ -1,9 +1,9 @@
-import { CdkDragDrop, moveItemInArray, Point, transferArrayItem } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, RouterModule } from '@angular/router';
-import { mergeMap, map, Observable, Subscription, pipe, tap, forkJoin } from 'rxjs';
-import { CheckItem, CheckList, Column, EditTaskResult, Task, TasksColumn } from 'src/app/interfaces/app.interfaces';
+import { ActivatedRoute } from '@angular/router';
+import { mergeMap, Observable, Subscription, forkJoin } from 'rxjs';
+import { CheckList, Column, EditTaskResult, Task, TasksColumn } from 'src/app/interfaces/app.interfaces';
 import { AppService } from 'src/app/services/app.service';
 import { HttpService } from 'src/app/services/http/http.service';
 import { EditTaskDialogComponent } from '../edit-task-dialog/edit-task-dialog.component';
@@ -51,18 +51,6 @@ export class TasksPageComponent implements OnInit {
     this.boardId = this.route.snapshot.url[this.route.snapshot.url.length - 1].path;
     this.boardTitle = this.route.snapshot.data['tasksPageData']['boardTitle'];
     this.assignColumns(this.route.snapshot.data['tasksPageData']['tasksColumns']);
-
-    // this.route.params.subscribe({
-    //   next: (params) => {
-    //     const columnIndex = this.columns.findIndex((column: Column) => column._id === params['columnId']);
-    //     if (columnIndex >= 0) {
-    //       const taskIndex = this.columns[columnIndex].tasks.findIndex((task: Task) => task._id === params['taskId']);
-    //       if (taskIndex >= 0) {
-    //         this.editTask(columnIndex, taskIndex);
-    //       }
-    //     }
-    //   }
-    // });
   }
 
   ngOnDestroy(): void {
@@ -70,11 +58,11 @@ export class TasksPageComponent implements OnInit {
     this.showTaskSubscription.unsubscribe();
   }
 
-  setEditMode(index: number, edit: boolean) {
+  setEditMode(index: number, edit: boolean): void {
     this.columns[index].editMode = edit;
   }
 
-  createTask(columnIndex: number) {
+  createTask(columnIndex: number): void {
     this.showTaskEditDialog('NEW_TASK_DIALOG.TITLE', this.boardTitle, this.columns[columnIndex].title).subscribe({
       next: (taskData: EditTaskResult) => {
         if (taskData) {
@@ -98,7 +86,7 @@ export class TasksPageComponent implements OnInit {
     });
   }
 
-  editTask(columnIndex: number, taskIndex: number) {
+  editTask(columnIndex: number, taskIndex: number): void {
     const title = this.columns[columnIndex].tasks[taskIndex].title;
     const description = this.columns[columnIndex].tasks[taskIndex].description;
     let checkList: CheckList = [];
@@ -173,10 +161,7 @@ export class TasksPageComponent implements OnInit {
           this.http.createColumn(title, order, this.boardId).subscribe({
             next: (column) => {
               this.columns.push({...column, editMode: false, tasks: []});
-            },
-            // error: (error) => {
-            //   this.app.processError(error);
-            // }
+            }
           });
         }
       }
@@ -187,10 +172,7 @@ export class TasksPageComponent implements OnInit {
     this.http.editColumn(title, this.columns[index].order, this.columns[index].boardId, this.columns[index]._id).subscribe({
       next: (column) => {
         this.columns[index].title = column.title;
-      },
-      // error: (error) => {
-      //   this.app.processError(error);
-      // }
+      }
     });
   }
 
@@ -217,7 +199,8 @@ export class TasksPageComponent implements OnInit {
         description,
         descriptionPlaceholder: 'INPUTS.PLACEHOLDERS.TASK_DESCRIPTION',
         checkList,
-      }
+      },
+      disableClose: true
     };
     const dialogRef = this.dialog.open(EditTaskDialogComponent, data);
     return dialogRef.afterClosed();
@@ -235,10 +218,7 @@ export class TasksPageComponent implements OnInit {
     ).subscribe({
       next: () => {
         this.columns.splice(columnIndex, 1);
-      },
-      // error: (error) => {
-      //   this.app.processError(error);
-      // }
+      }
     });
     event.stopPropagation();
   }
@@ -257,10 +237,7 @@ export class TasksPageComponent implements OnInit {
     ).subscribe({
       next: () => {
         this.columns[columnIndex].tasks.splice(taskIndex, 1);
-      },
-      // error: (error) => {
-      //   this.app.processError(error);
-      // }
+      }
     });
     event.stopPropagation();
   }
@@ -271,15 +248,10 @@ export class TasksPageComponent implements OnInit {
     }
     moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
     this.columns.forEach((column, index) => column.order = index);
-    this.http.updateColumnsOrder(this.columns).subscribe({
-      // next: (newColumns) => this.assignColumns(newColumns),
-      // error: (error) => {
-      //   this.app.processError(error);
-      // }
-    });
+    this.http.updateColumnsOrder(this.columns).subscribe();
   }
 
-  dropTask(event: CdkDragDrop<TasksColumn>) {
+  dropTask(event: CdkDragDrop<TasksColumn>): void {
     let updateTasksList: Task[];
     if (event.previousContainer === event.container) {
       if (event.previousIndex === event.currentIndex) {
@@ -305,7 +277,7 @@ export class TasksPageComponent implements OnInit {
     this.http.updateTasksOrder(updateTasksList).subscribe();
   }
 
-  columnTitleOnEnterKey(title: string, columnIndex: number) {
+  columnTitleOnEnterKey(title: string, columnIndex: number): void {
     if (title.length === 0) {
       return;
     }

@@ -1,6 +1,3 @@
-:host {
-}
-
 mat-toolbar {
   height: auto;
   width: 100%;
@@ -22,12 +19,20 @@ mat-toolbar {
   max-width: 800px;
 }
 
+.date {
+  justify-self: start;
+}
+
+.rs {
+  justify-self: end;
+}
 
 @media screen and (max-width: 599px) {
   .footer-content {
     grid-template-areas: 'author rs'
                          'date rs';
     row-gap: 0;
+    grid-auto-columns: auto;
 
     .name {
       grid-area: author;
@@ -35,10 +40,12 @@ mat-toolbar {
 
     .date {
       grid-area: date;
+      justify-self: center;
     }
 
     .rs {
       grid-area: rs;
+      justify-self: center;
     }
   }
 }

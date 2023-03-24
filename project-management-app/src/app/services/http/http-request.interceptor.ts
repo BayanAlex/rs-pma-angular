@@ -4,13 +4,13 @@ import { HttpInterceptor, HttpHandler, HttpRequest } from '@angular/common/http'
 import { finalize } from 'rxjs';
 
 @Injectable()
-export class AuthInterceptor implements HttpInterceptor {
+export class HttpRequestInterceptor implements HttpInterceptor {
   requestsCount = 0;
 
   constructor(private httpService: HttpService) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler) {
-    if(request.url.includes('/assets')) { //filter Ngx requests
+    if(request.url.includes('/assets')) { // filter Ngx requests
       return next.handle(request);
     }
     this.httpService.httpRequestPending = true;

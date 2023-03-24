@@ -1,4 +1,4 @@
-import { Component, Inject, ElementRef, ViewChildren, QueryList } from '@angular/core';
+import { Component, Inject, ElementRef, ViewChildren, QueryList, HostListener } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CheckItem, CheckList, EditTaskData } from 'src/app/interfaces/app.interfaces';
 
@@ -14,25 +14,17 @@ export class EditTaskDialogComponent {
 
   constructor(public dialogRef: MatDialogRef<EditTaskDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: EditTaskData) {
-      this.checkList = data.checkList.map((item) => {return {...item}});
+    this.checkList = data.checkList.map((item) => {return {...item}});
   }
 
-  focus(event: Event) {
+  focus(event: Event): void {
     if (event.target && this.data.title && !this.titleInputBlured) {
       (event.target as HTMLInputElement).blur();
       this.titleInputBlured = true;
     }
   }
 
-  // @HostListener('window:keyup.Enter', ['$event'])
-  // onDialogClick(event: KeyboardEvent): void {
-  //   const result = {
-  //     title: this.data.title,
-  //     description: this.data.description
-  //   };
-  //   this.dialogRef.close(result);
-  // }
-
+  @HostListener('window:keyup.Escape', ['$event'])
   onCancelClick(): void {
     this.dialogRef.close();
   }
@@ -48,7 +40,7 @@ export class EditTaskDialogComponent {
     setTimeout(() => this.checkItemsInputs.toArray()[this.checkList.length -1].nativeElement.focus(), 0);
   }
 
-  deleteCheckItem(index: number) {
+  deleteCheckItem(index: number): void {
     this.checkList.splice(index, 1);
   }
 }

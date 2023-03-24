@@ -1,0 +1,161 @@
+$desktop-font-p: 18px;
+
+:host {
+  height: 100%;
+  overflow-y: auto;
+}
+
+h1 {
+  font-size: 48px !important;
+  font-weight: 900 !important;
+  line-height: 1.2;
+}
+
+h2 {
+  font-size: 32px !important;
+  line-height: 1.2;
+  margin: 0 0 30px !important;
+}
+
+p {
+  font-size: $desktop-font-p !important;
+  line-height: 1.5;
+}
+
+.section {
+  margin-bottom: 170px;
+  padding: 0 150px;
+
+  &-content {
+    display: flex;
+    align-items: center;
+    gap: 100px;
+    width: 100%;
+  }
+
+  &-dev {
+    padding-left: 0;
+    margin-top: 65px;
+
+    h2 {
+      margin-top: 70px !important;
+    }
+
+    &-content {
+      display: grid;
+      column-gap: 150px;
+      grid-template-columns: auto 1fr;
+      grid-template-areas: 'img caption'
+                           'img text'
+                           'img skills'
+                           'img more';
+    }
+
+    &-img {
+      grid-area: img;
+      width: 565px;
+    }
+
+    &-caption {
+      grid-area: caption;
+      margin: 45px 0 40px !important;
+    }
+
+    &-text {
+      grid-area: text;
+    }
+
+    &-skills {
+      grid-area: skills;
+    }
+
+    &-more {
+      grid-area: more;
+      margin-top: 30px;
+      width: fit-content;
+    }
+
+    .skills-list {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      column-gap: 100px;
+
+      &-item {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        font-size: $desktop-font-p;
+        gap: 8px;
+        height: 32px;
+      }
+    }
+  }
+
+  &-pma {
+    &-content {
+      justify-content: flex-end;
+    }
+
+    &-img {
+      max-width: 620px;
+      width: 100%;
+    }
+
+    &-text {
+      width: 100%;
+    }
+  }
+
+  &-powered {
+    &-content {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .tech-list {
+      display: grid;
+      grid-template-rows: 1fr;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 80px;
+      justify-content: center;
+      align-items: start;
+      margin-top: 75px;
+      width: fit-content;
+    }
+
+    .tech-list-item {
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: center;
+      font-size: $desktop-font-p;
+
+      span {
+        font-size: $desktop-font-p;
+        padding-top: 20px;
+        text-align: center;
+      }
+
+      img {
+        height: 100px;
+        width: auto;
+      }
+    }
+  }
+
+  &-course {
+    &-img {
+      max-width: 700px;
+      width: 100%;
+    }
+
+    &-text {
+      width: 100%;
+    }
+  }
+}
+
+@import './adaptive/desktop.scss';
+@import './adaptive/tablet.scss';
+@import './adaptive/mobile.scss';

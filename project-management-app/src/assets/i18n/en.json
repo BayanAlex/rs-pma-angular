@@ -61,6 +61,43 @@
       "SEARCH_CLOSE": "Close search"
     }
   },
+  "WELCOME_PAGE": {
+    "TITLE": "Project Management Application",
+    "DEV": {
+      "TEXT": "Hello, world! My name is Oleksandr. I am a developer and engineer from Ukraine.\nI am fond of various kinds of development.\nI make desktop and WEB apps, microcontroller firmwares and circuits, MS Office automation (VBA).",
+      "SKILLS": {
+        "TITLE": "My knowledges, skills and tools",
+        "1": "HTML",
+        "2": "CSS, SCSS",
+        "3": "JavaScript",
+        "4": "TypeScript",
+        "5": "Angular",
+        "6": "RxJS",
+        "7": "Unit testing (Jest)",
+        "8": "GIT",
+        "9": "Figma",
+        "10": "VS Code",
+        "11": "HTTP, REST",
+        "12": "NPM",
+        "13": "WebPack",
+        "14": "S.O.L.I.D"
+      },
+      "MORE_INFO": "More information"
+    },
+    "PMA": {
+      "TITLE": "What is Project Management Application?",
+      "TEXT": "This app allows you to create easily columns of tasks grouped in boards.\nEach task includes a description and a checklist.\nUsing drag and drop, you can reorder columns, move tasks within and between columns."
+    },
+    "TECH": {
+      "TITLE": "Powered by:"
+    },
+    "COURSE": {
+      "TITLE": "RS School FrontEnd Course",
+      "TEXT1": "The RS School is working by the principle of \"Pay it forward\".\nMembers of the community share their knowledge and check students' tasks for free.",
+      "TEXT2": "The FrontEnd course consists of three stages.\nDuring the course students study basic WEB technologies and do a lot of tasks and projects.",
+      "TEXT3": "After accomplishing all stages, students receive an electronic certificate of completion."
+    }
+  },
   "LOGIN_PAGE": {
     "TITLE": "Login",
     "SUBMIT_BUTTON": "Login"

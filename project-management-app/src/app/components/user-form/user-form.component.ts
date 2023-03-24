@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { AuthData } from 'src/app/interfaces/http.interfaces';
-import { InputsSettings, InputError } from '../../interfaces/app.interfaces';
+import { InputsSettings, InputError } from 'src/app/interfaces/app.interfaces';
 import { AppService } from 'src/app/services/app.service';
 import { Subscription } from 'rxjs'
 

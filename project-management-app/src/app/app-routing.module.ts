@@ -47,7 +47,6 @@ const routes: Routes = [
   { path: 'profile', component: ProfilePageComponent, canActivate: [isLoggedInGuard] },
   { path: 'boards', component: BoardsPageComponent, resolve: { boards: resolveBoards }, canActivate: [isLoggedInGuard] },
   { path: 'boards/:id', component: TasksPageComponent, resolve: { tasksPageData: resolveColumns }, canActivate: [isLoggedInGuard] },
-  // { path: 'boards/:id', loadComponent: () => import('../app/components/tasks-page/tasks-page.component').then((mod) => mod.TasksPageComponent), resolve: { tasksPageData: resolveColumns }, canActivate: [isLoggedInGuard], runGuardsAndResolvers: 'always' },
   { path: '**', component: NotFoundPageComponent }
 ];
 

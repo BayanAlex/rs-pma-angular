@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -11,7 +11,7 @@ import { HttpService } from 'src/app/services/http/http.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
   searchMode = false;
   searchTimer: ReturnType<typeof setTimeout>;
   searchResults: Task[] = [];
@@ -21,15 +21,11 @@ export class HeaderComponent implements OnInit {
 
   constructor (public translate: TranslateService, public app: AppService, public http: HttpService, public router: Router, private route: ActivatedRoute) {}
 
-  ngOnInit(): void {
-
-  }
-
-  switchMode() {
+  switchMode(): void {
     this.darkMode = !this.darkMode;
   }
 
-  searchItemSelected(index: number) {
+  searchItemSelected(index: number): void {
     const task = this.searchResults[index];
     this.router.navigate(['/boards', task.boardId]).then(() => {
       this.app.showTask(task.columnId, task._id);
@@ -37,22 +33,22 @@ export class HeaderComponent implements OnInit {
     });
   }
 
-  toggleSearchMode() {
+  toggleSearchMode(): void {
     this.searchMode = !this.searchMode;
     if (this.searchMode) {
       setTimeout(() => this.searchInput.nativeElement.focus(), 0);
     }
   }
 
-  createBoard() {
+  createBoard(): void {
     this.app.createBoard();
   }
 
-  createColumn() {
+  createColumn(): void {
     this.app.createColumn();
   }
 
-  auth() {
+  auth(): void {
     if(this.app.isLoggedIn) {
       this.logout();
     } else {
@@ -60,7 +56,7 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  logout() {
+  logout(): void {
     this.app.showConfirmDialog('LOGOUT.TEXT').subscribe((confirm: boolean) => {
       if (confirm) {
         this.app.logout('/');
@@ -68,18 +64,15 @@ export class HeaderComponent implements OnInit {
     });
   }
 
-  searchTask(value: string) {
+  searchTask(value: string): void {
     this.http.searchTask(value, this.app.user._id).subscribe({
       next: (tasks: Task[]) => {
         this.searchResults = tasks;
-      },
-      // error: (error) => {
-      //   this.app.processError(error);
-      // }
+      }
     });
   }
 
-  onSearchInputChange(event: Event) {
+  onSearchInputChange(event: Event): void {
     const searchValue = (event.target as HTMLInputElement).value;
     clearTimeout(this.searchTimer);
     if (searchValue) {

@@ -8,6 +8,5 @@ export class GlobalErrorHandlerService implements ErrorHandler {
 
   handleError(error: Error) {
     this.app.processError(error);
-    console.log(error);
   }
 }

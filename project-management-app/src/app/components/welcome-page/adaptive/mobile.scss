@@ -1,0 +1,145 @@
+@media screen and (max-width: 960px) {
+  p {
+    text-align: left;
+  }
+
+  h2 {
+    text-align: center;
+  }
+
+  .section {
+    margin-bottom: 70px;
+
+    &-content {
+      gap: 50px;
+      flex-direction: column;
+    }
+
+    &-pma {
+      &-content {
+        flex-direction: column-reverse;
+      }
+    }
+
+    &-dev {
+      margin-top: 0;
+
+      &-content {
+        grid-template-areas:  'caption caption'
+                              'img text'
+                              'skills skills'
+                              'more more';
+      }
+
+      &-caption {
+        text-align: center;
+        margin-right: 0 !important;
+      }
+
+      &-text {
+        align-self: center;
+      }
+
+      &-img {
+        width: 350px;
+      }
+    }
+
+    &-powered {
+      .tech-list {
+        gap: 40px;
+        margin-top: 20px;
+      }
+
+      .tech-list-item {
+        span {
+          font-size: 16px;
+          padding-top: 15px;
+        }
+
+        img {
+          height: 70px;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .section {
+    &-dev {
+      padding: 0 70px;
+
+      &-content {
+        grid-template-areas:  'caption'
+                              'text'
+                              'img'
+                              'skills'
+                              'more';
+        column-gap: 0;
+      }
+
+      &-caption {
+        font-size: 30px !important;
+      }
+
+      &-text {
+        margin-right: 0;
+      }
+
+      &-img {
+        margin-left: -70px;
+        margin-top: 20px;
+        width: 450px;
+      }
+
+      .skills-list {
+        column-gap: 50px;
+      }
+    }
+
+    &-powered {
+      .tech-list {
+        column-gap: 20px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .section {
+    padding: 0 40px;
+
+    &-dev-img {
+      margin-left: -40px;
+    }
+
+    &-powered {
+      .tech-list {
+        grid-template-rows: repeat(4, 1fr);
+        grid-template-columns: repeat(2, 1fr);
+        column-gap: 80px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 450px) {
+  .section {
+    &-dev {
+
+      .skills-list {
+        grid-template-columns: 1fr;
+        column-gap: 0;
+      }
+    }
+
+    &-powered {
+      .tech-list {
+        column-gap: 0;
+        justify-content: center;
+        width: 100%;
+      }
+    }
+  }
+}

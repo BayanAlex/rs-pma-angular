@@ -3,6 +3,7 @@
   flex-direction: column;
   height: 100%;
   position: relative;
+  padding-top: 20px;
 }
 
 .page-title {
@@ -18,7 +19,6 @@
 }
 
 .columns {
-  // max-width: 100vw;
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
@@ -97,7 +97,6 @@ mat-card-content {
 
 .column-title {
   width: 100%;
-  // height: 48px;
   font-size: large;
   font-weight: 500;
   border-bottom: 1px solid transparent;

@@ -4,8 +4,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { HttpService } from './http/http.service';
 import { AuthData } from 'src/app/interfaces/http.interfaces';
 import { User } from 'src/app/interfaces/app.interfaces';
-import { Observable, Subscription, throwError, Subject, share, connect } from 'rxjs';
-import { catchError, tap, map, mergeMap } from 'rxjs/operators';
+import { Observable, Subscription, Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../components/confirm-dialog/confirm-dialog.component';
@@ -22,7 +22,6 @@ export class AppService {
   public createBoard$ = new Subject<void>();
   public createColumn$ = new Subject<void>();
   public showTask$ = new Subject<{ columnId: string, taskId: string }>();
-  // public createBoard$ = this.createBoardSubject$.asObservable();
 
   constructor(private router: Router, private http: HttpService, public translate: TranslateService, private snackBar: MatSnackBar, private dialog: MatDialog) {
     const lang = localStorage.getItem('lang');
@@ -106,10 +105,7 @@ export class AppService {
           });
           this.updateUserData();
           this.isLoggedIn = true;
-        }),
-        // catchError((error) => {
-        //   return throwError(() => error);
-        // })
+        })
       )
   }
 
@@ -118,10 +114,7 @@ export class AppService {
       .pipe(
         map(() => {
           this.logout('/');
-        }),
-        // catchError((error) => {
-        //   return throwError(() => error);
-        // })
+        })
       )
   }
 

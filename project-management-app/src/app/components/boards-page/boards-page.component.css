@@ -1,1 +1,1 @@
-:host{display:flex;flex-direction:column;max-height:100%}.boards{flex:1 1 auto;display:grid;grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));gap:20px;padding:20px;overflow-y:auto}
+:host{display:flex;flex-direction:column;max-height:100%;padding-top:20px}.boards{flex:1 1 auto;display:grid;grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));gap:20px;padding:20px;overflow-y:auto}
