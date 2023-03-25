@@ -284,4 +284,8 @@ export class TasksPageComponent implements OnInit {
     this.setEditMode(columnIndex, false);
     this.editColumnTitle(title, columnIndex);
   }
+
+  isTouchScreen(): boolean {
+    return navigator.maxTouchPoints > 0;
+  }
 }

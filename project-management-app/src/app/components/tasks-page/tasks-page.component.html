@@ -11,7 +11,7 @@
 <div class="columns-wrap">
   <div cdkDropList cdkDropListOrientation="horizontal" class="columns" (cdkDropListDropped)="dropColumn($event)" cdkDropListGroup [cdkDropListAutoScrollDisabled]="false">
     <div *ngFor="let column of columns; let columnIndex = index" class="column" class="card-wrap">
-      <mat-card cdkDragLockAxis="x" cdkDrag class="overflow-hidden">
+      <mat-card cdkDragLockAxis="x" cdkDrag [cdkDragStartDelay]="{ mouse: 0, touch: 500 }" class="overflow-hidden">
         <mat-card-header class="!p-0 mb-[7px]">
           <mat-toolbar color="primary" class="!py-[5px] !px-[12px] justify-between h-[58px]">
             <div
@@ -82,7 +82,8 @@
               class="task"
               *ngFor="let task of column.tasks; let taskIndex = index"
               cdkDrag
-              [matTooltip]="'TASKS_PAGE.DRAG_TOOLTIP' | translate"
+              [cdkDragStartDelay]="{ mouse: 0, touch: 500 }"
+              [matTooltip]="!isTouchScreen() ? ('TASKS_PAGE.DRAG_TOOLTIP' | translate) : null"
               matTooltipShowDelay="1000"
               onclick="this.blur()"
               (click)="editTask(columnIndex, taskIndex)"
