@@ -66,7 +66,7 @@
     "DEV": {
       "TEXT": "Hello, world! My name is Oleksandr. I am a developer and engineer from Ukraine.\nI am fond of various kinds of development.\nI make desktop and WEB apps, microcontroller firmwares and circuits, MS Office automation (VBA).",
       "SKILLS": {
-        "TITLE": "My knowledges, skills and tools",
+        "TITLE": "My knowledge, skills and tools",
         "1": "HTML",
         "2": "CSS, SCSS",
         "3": "JavaScript",
@@ -80,7 +80,7 @@
         "11": "HTTP, REST",
         "12": "NPM",
         "13": "WebPack",
-        "14": "S.O.L.I.D"
+        "14": "S.O.L.I.D."
       },
       "MORE_INFO": "More information"
     },
