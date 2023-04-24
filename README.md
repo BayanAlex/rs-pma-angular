@@ -13,7 +13,10 @@
   
 `HTML` `SCSS` `Angular` `TypeScript` `RxJS` `Material` `Tailwind` `Ngx-translate` 
 
+<details>
+<summary>Screenshots</summary>
+
 [![LINK](https://github.com/BayanAlex/portfolio/blob/main/img/pma1.png)](https://cyberalex-pma.netlify.app/)  
 [![LINK](https://github.com/BayanAlex/portfolio/blob/main/img/pma2.png)](https://cyberalex-pma.netlify.app/)  
 [![LINK](https://github.com/BayanAlex/portfolio/blob/main/img/pma3.png)](https://cyberalex-pma.netlify.app/)  
-[![LINK](https://github.com/BayanAlex/portfolio/blob/main/img/pma4.png)](https://cyberalex-pma.netlify.app/)  
+[![LINK](https://github.com/BayanAlex/portfolio/blob/main/img/pma4.png)](https://cyberalex-pma.netlify.app/)  </details>
