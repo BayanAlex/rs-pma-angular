@@ -1,6 +1,6 @@
 import { inject, NgModule } from '@angular/core';
 import { ActivatedRouteSnapshot, ResolveFn, RouterModule, RouterStateSnapshot, Routes } from '@angular/router';
-import { catchError, mergeMap, of, tap, throwError } from 'rxjs';
+import { catchError } from 'rxjs';
 import { BoardsPageComponent } from './components/boards-page/boards-page.component';
 import { LoginPageComponent } from './components/login-page/login-page.component';
 import { NotFoundPageComponent } from './components/not-found-page/not-found-page.component';
@@ -8,7 +8,7 @@ import { ProfilePageComponent } from './components/profile-page/profile-page.com
 import { SignUpPageComponent } from './components/signup-page/signup-page.component';
 import { TasksPageComponent } from './components/tasks-page/tasks-page.component';
 import { WelcomePageComponent } from './components/welcome-page/welcome-page.component';
-import { Board, Column, TasksPageData } from './interfaces/app.interfaces';
+import { Board, TasksPageData } from './interfaces/app.interfaces';
 import { AppService } from './services/app.service';
 import { isLoggedInGuard, isNotLoggedInGuard } from './services/auth-guard';
 import { BoardsService } from './services/boards.service';

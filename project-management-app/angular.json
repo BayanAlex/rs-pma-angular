@@ -7,7 +7,8 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "style": "scss"
+          "style": "scss",
+          "standalone": false
         }
       },
       "root": "",
@@ -72,10 +73,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "project-management-app:build:production"
+              "buildTarget": "project-management-app:build:production"
             },
             "development": {
-              "browserTarget": "project-management-app:build:development"
+              "buildTarget": "project-management-app:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -83,7 +84,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "project-management-app:build"
+            "buildTarget": "project-management-app:build"
           }
         },
         "test": {

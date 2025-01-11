@@ -8,7 +8,8 @@ import { mergeMap } from 'rxjs';
 @Component({
   selector: 'app-signup-page',
   templateUrl: './signup-page.component.html',
-  styleUrls: ['./signup-page.component.scss']
+  styleUrls: ['./signup-page.component.scss'],
+  standalone: false
 })
 export class SignUpPageComponent {
   @Output() pendingRequest = false;

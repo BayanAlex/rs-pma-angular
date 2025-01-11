@@ -8,7 +8,8 @@ import { Subscription } from 'rxjs'
 @Component({
   selector: 'app-user-form',
   templateUrl: './user-form.component.html',
-  styleUrls: ['./user-form.component.scss']
+  styleUrls: ['./user-form.component.scss'],
+  standalone: false
 })
 export class UserFormComponent implements OnInit {
   @Input() type: string;

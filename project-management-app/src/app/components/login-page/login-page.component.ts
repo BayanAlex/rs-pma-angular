@@ -2,11 +2,11 @@ import { Component, Output } from '@angular/core';
 import { AuthData } from 'src/app/interfaces/http.interfaces';
 import { AppService } from 'src/app/services/app.service';
 
-
 @Component({
   selector: 'app-login-page',
   templateUrl: './login-page.component.html',
-  styleUrls: ['./login-page.component.scss']
+  styleUrls: ['./login-page.component.scss'],
+  standalone: false
 })
 export class LoginPageComponent {
   @Output() pendingRequest = false;

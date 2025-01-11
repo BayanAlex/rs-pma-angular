@@ -6,7 +6,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatRadioModule } from '@angular/material/radio';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatFormFieldModule, MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
@@ -27,7 +26,6 @@ const MaterialComponents = [
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
-    FlexLayoutModule,
     MatRadioModule,
     MatDividerModule,
     MatFormFieldModule,

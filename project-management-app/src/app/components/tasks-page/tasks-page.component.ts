@@ -13,6 +13,7 @@ import { EditTitleDialogComponent } from '../edit-title-dialog/edit-title-dialog
   selector: 'app-tasks-page',
   templateUrl: './tasks-page.component.html',
   styleUrls: ['./tasks-page.component.scss'],
+  standalone: false
 })
 export class TasksPageComponent implements OnInit {
   columns: TasksColumn[] = [];

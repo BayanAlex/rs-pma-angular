@@ -4,7 +4,8 @@ import { AppService } from 'src/app/services/app.service';
 @Component({
   selector: 'app-board',
   templateUrl: './board.component.html',
-  styleUrls: ['./board.component.scss']
+  styleUrls: ['./board.component.scss'],
+  standalone: false
 })
 export class BoardComponent {
   @Input() title: string;

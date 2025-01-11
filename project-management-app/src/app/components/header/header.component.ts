@@ -9,7 +9,8 @@ import { HttpService } from 'src/app/services/http/http.service';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+  styleUrls: ['./header.component.scss'],
+  standalone: false
 })
 export class HeaderComponent {
   searchMode = false;

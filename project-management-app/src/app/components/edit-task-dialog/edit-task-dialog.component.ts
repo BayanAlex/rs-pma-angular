@@ -5,7 +5,8 @@ import { CheckItem, CheckList, EditTaskData } from 'src/app/interfaces/app.inter
 @Component({
   selector: 'app-edit-task-dialog',
   templateUrl: './edit-task-dialog.component.html',
-  styleUrls: ['./edit-task-dialog.component.scss']
+  styleUrls: ['./edit-task-dialog.component.scss'],
+  standalone: false
 })
 export class EditTaskDialogComponent {
   @ViewChildren('checkItemTitle') checkItemsInputs: QueryList<ElementRef>;

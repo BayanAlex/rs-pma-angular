@@ -5,7 +5,8 @@ import { EditTitleData } from 'src/app/interfaces/app.interfaces';
 @Component({
   selector: 'app-edit-title-dialog',
   templateUrl: './edit-title-dialog.component.html',
-  styleUrls: ['./edit-title-dialog.component.scss']
+  styleUrls: ['./edit-title-dialog.component.scss'],
+  standalone: false
 })
 export class EditTitleDialogComponent {
   constructor(public dialogRef: MatDialogRef<EditTitleDialogComponent>,

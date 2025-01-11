@@ -50,11 +50,9 @@ import { GlobalErrorHandlerService } from './services/global-error-handler.servi
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    BrowserModule,
     HttpClientModule,
     TranslationModule,
     HttpModule,
-
   ],
   providers: [
     {

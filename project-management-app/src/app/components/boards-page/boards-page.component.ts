@@ -11,7 +11,8 @@ import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-boards-page',
   templateUrl: './boards-page.component.html',
-  styleUrls: ['./boards-page.component.scss']
+  styleUrls: ['./boards-page.component.scss'],
+  standalone: false
 })
 export class BoardsPageComponent implements OnInit, OnDestroy {
   boards: Board[];
@@ -62,7 +63,7 @@ export class BoardsPageComponent implements OnInit, OnDestroy {
         const index = this.boards.findIndex((board) => board._id === id);
         this.boards.splice(index, 1);
       }
-    })
+    });
   }
 
   editBoard(id: string): void {

@@ -151,6 +151,7 @@ mat-card-content {
   position: relative;
   border-bottom: 1px solid #ccc;
   min-height: 48px;
+  overflow: hidden;
 }
 
 .task:last-child {
