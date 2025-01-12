@@ -2,10 +2,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Board } from 'src/app/interfaces/app.interfaces';
 import { AppService } from 'src/app/services/app.service';
-import { HttpService } from 'src/app/services/http/http.service';
 import { EditTitleDialogComponent } from '../edit-title-dialog/edit-title-dialog.component';
 import { Observable, Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
+import { BoardsService } from 'src/app/services/boards.service';
 
 
 @Component({
@@ -18,7 +18,12 @@ export class BoardsPageComponent implements OnInit, OnDestroy {
   boards: Board[];
   createBoardSubscription: Subscription;
 
-  constructor(private app: AppService, private http: HttpService, private route: ActivatedRoute, private dialog: MatDialog) {}
+  constructor(
+    private app: AppService,
+    private boardsService: BoardsService,
+    private route: ActivatedRoute,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
     this.route.data.subscribe({
@@ -47,7 +52,7 @@ export class BoardsPageComponent implements OnInit, OnDestroy {
     this.showEditDialog('NEW_BOARD_DIALOG.TITLE', '').subscribe({
       next: (result) => {
         if (result) {
-          this.http.createBoard(result, this.app.user._id).subscribe({
+          this.boardsService.createBoard(result, this.app.user._id).subscribe({
             next: (board) => {
               this.boards.push(board);
             }
@@ -58,7 +63,7 @@ export class BoardsPageComponent implements OnInit, OnDestroy {
   }
 
   deleteBoard(id: string): void {
-    this.http.deleteBoard(id).subscribe({
+    this.boardsService.deleteBoard(id).subscribe({
       next: () => {
         const index = this.boards.findIndex((board) => board._id === id);
         this.boards.splice(index, 1);
@@ -72,7 +77,7 @@ export class BoardsPageComponent implements OnInit, OnDestroy {
     this.showEditDialog('EDIT_BOARD_DIALOG.TITLE', title).subscribe({
       next: (newTitle) => {
         if (newTitle) {
-          this.http.editBoard(id, newTitle, this.app.user._id).subscribe({
+          this.boardsService.editBoard(id, newTitle, this.app.user._id).subscribe({
             next: (board) => {
               this.boards[index].title = board.title;
             }

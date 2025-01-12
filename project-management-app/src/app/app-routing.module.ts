@@ -12,7 +12,7 @@ import { Board, TasksPageData } from './interfaces/app.interfaces';
 import { AppService } from './services/app.service';
 import { isLoggedInGuard, isNotLoggedInGuard } from './services/auth-guard';
 import { BoardsService } from './services/boards.service';
-import { TasksService } from './services/tasks.service';
+import { ColumnsService } from './services/columns.service';
 
 const resolveBoards: ResolveFn<Board[]> = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
   const boardsService = inject(BoardsService);
@@ -27,10 +27,10 @@ const resolveBoards: ResolveFn<Board[]> = (route: ActivatedRouteSnapshot, state:
 };
 
 const resolveColumns: ResolveFn<TasksPageData> = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
-  const tasksService = inject(TasksService);
+  const columnsService = inject(ColumnsService);
   const app = inject(AppService);
   const boardId = route.url[route.url.length - 1].path;
-  return tasksService
+  return columnsService
     .getColumns(boardId).pipe(
       catchError((error, caught) => {
         app.processError(error);

@@ -129,6 +129,6 @@
     </button>
   </div>
 </mat-toolbar>
-@if (http.httpRequestPending) {
+@if (httpService.httpRequestPending) {
   <mat-progress-bar mode="indeterminate"></mat-progress-bar>
 }

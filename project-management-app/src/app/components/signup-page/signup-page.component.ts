@@ -1,8 +1,8 @@
 import { Component, Output } from '@angular/core';
-import { HttpService } from 'src/app/services/http/http.service';
 import { AuthData } from 'src/app/interfaces/http.interfaces';
 import { AppService } from 'src/app/services/app.service';
 import { mergeMap } from 'rxjs';
+import { AuthService } from 'src/app/services/auth.service';
 
 
 @Component({
@@ -14,11 +14,14 @@ import { mergeMap } from 'rxjs';
 export class SignUpPageComponent {
   @Output() pendingRequest = false;
 
-  constructor(private http: HttpService, public app: AppService) { }
+  constructor(
+    public app: AppService,
+    private authService: AuthService,
+  ) { }
 
   signUp(data: AuthData): void {
     this.pendingRequest = true;
-    this.http.signUp(data)
+    this.authService.signUp(data)
     .pipe(
       mergeMap(() => {
         delete data.name;

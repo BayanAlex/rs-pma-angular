@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { HttpService } from './http/http.service';
 import { AuthData } from 'src/app/interfaces/http.interfaces';
 import { User } from 'src/app/interfaces/app.interfaces';
 import { Observable, Subscription, Subject } from 'rxjs';
@@ -9,6 +8,7 @@ import { map } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../components/confirm-dialog/confirm-dialog.component';
+import { AuthService } from './auth.service';
 
 
 @Injectable({
@@ -23,7 +23,13 @@ export class AppService {
   public createColumn$ = new Subject<void>();
   public showTask$ = new Subject<{ columnId: string, taskId: string }>();
 
-  constructor(private router: Router, private http: HttpService, public translate: TranslateService, private snackBar: MatSnackBar, private dialog: MatDialog) {
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    public translate: TranslateService,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
+  ) {
     const lang = localStorage.getItem('lang');
     lang !== null ? this.setLanguage(+lang) : this.setLanguage(0);
     this.updateUserData();
@@ -53,22 +59,21 @@ export class AppService {
       this.userData$.next(userData);
       return;
     }
-    const token = localStorage.getItem('token');
+    const token = this.authService.loadTokenFromStorage();
     const id = localStorage.getItem('id');
-    if (token && id) {
-      this.loginState = true;
-      this.http.token = token;
-      this.user._id = id;
-      this.http.getUser(id).subscribe({
-        next: (user) => {
-          this.user = user;
-          this.userData$.next(user);
-        },
-        error: this.processError.bind(this)
-      });
-    } else {
+    if (!token || !id) {
       this.logout('/');
+      return;
     }
+    this.loginState = true;
+    this.user._id = id;
+    this.authService.getUser(id).subscribe({
+      next: (user) => {
+        this.user = user;
+        this.userData$.next(user);
+      },
+      error: this.processError.bind(this)
+    });
   }
 
   get isLoggedIn(): boolean {
@@ -87,14 +92,14 @@ export class AppService {
     this.isLoggedIn = false;
     this.user._id = '';
     localStorage.removeItem('id');
-    this.http.logout();
+    this.authService.logout();
     if (gotoUrl) {
       this.gotoPage(gotoUrl);
     }
   }
 
   login(data: AuthData): Observable<void> {
-    return this.http.login(data)
+    return this.authService.login(data)
       .pipe(
         map(() => {
           const subscription: Subscription = this.userData$.subscribe({
@@ -110,7 +115,7 @@ export class AppService {
   }
 
   deleteAccount(): Observable<void> {
-    return this.http.deleteAccount(this.user._id)
+    return this.authService.deleteAccount(this.user._id)
       .pipe(
         map(() => {
           this.logout('/');

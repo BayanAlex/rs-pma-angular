@@ -1,10 +1,11 @@
 import { Component, ElementRef, viewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Task } from 'src/app/interfaces/app.interfaces';
 import { AppService } from 'src/app/services/app.service';
 import { HttpService } from 'src/app/services/http/http.service';
+import { TasksService } from 'src/app/services/tasks.service';
 
 @Component({
   selector: 'app-header',
@@ -20,7 +21,13 @@ export class HeaderComponent {
   darkMode = false;
   readonly searchInput = viewChild<ElementRef>('searchInput');
 
-  constructor (public translate: TranslateService, public app: AppService, public http: HttpService, public router: Router, private route: ActivatedRoute) {}
+  constructor (
+    public translate: TranslateService,
+    public app: AppService,
+    public router: Router,
+    public httpService: HttpService,
+    private tasksService: TasksService,
+  ) {}
 
   switchMode(): void {
     this.darkMode = !this.darkMode;
@@ -66,7 +73,7 @@ export class HeaderComponent {
   }
 
   searchTask(value: string): void {
-    this.http.searchTask(value, this.app.user._id).subscribe({
+    this.tasksService.searchTask(value, this.app.user._id).subscribe({
       next: (tasks: Task[]) => {
         this.searchResults = tasks;
       }

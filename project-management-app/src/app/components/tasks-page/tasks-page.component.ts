@@ -5,9 +5,10 @@ import { ActivatedRoute } from '@angular/router';
 import { mergeMap, Observable, Subscription, forkJoin } from 'rxjs';
 import { CheckList, Column, EditTaskResult, Task, TasksColumn } from 'src/app/interfaces/app.interfaces';
 import { AppService } from 'src/app/services/app.service';
-import { HttpService } from 'src/app/services/http/http.service';
 import { EditTaskDialogComponent } from '../edit-task-dialog/edit-task-dialog.component';
 import { EditTitleDialogComponent } from '../edit-title-dialog/edit-title-dialog.component';
+import { TasksService } from 'src/app/services/tasks.service';
+import { ColumnsService } from 'src/app/services/columns.service';
 
 @Component({
   selector: 'app-tasks-page',
@@ -22,7 +23,13 @@ export class TasksPageComponent implements OnInit {
   createColumnSubscription: Subscription;
   showTaskSubscription: Subscription;
 
-  constructor(private app: AppService, private http: HttpService, private route: ActivatedRoute, private dialog: MatDialog) {
+  constructor(
+    private app: AppService,
+    private columnsService: ColumnsService,
+    private tasksService: TasksService,
+    private route: ActivatedRoute,
+    private dialog: MatDialog
+  ) {
     this.showTaskSubscription = this.app.showTask$.subscribe({
       next: (taskData) => {
         const boardId = this.route.snapshot.url[this.route.snapshot.url.length - 1].path;
@@ -69,7 +76,7 @@ export class TasksPageComponent implements OnInit {
         if (taskData) {
           const order = this.columns[columnIndex].tasks.length > 0 ? Math.max(...this.columns[columnIndex].tasks.map((task) => task.order)) + 1 : 0;
           const columnId = this.columns[columnIndex]._id;
-          this.http
+          this.tasksService
             .createTask(taskData.title, taskData.description, this.boardId, columnId, order, this.app.user._id)
             .pipe(
               mergeMap((task: Task) => {
@@ -78,7 +85,7 @@ export class TasksPageComponent implements OnInit {
                   item.boardId = this.boardId;
                   item.taskId = task._id;
                 });
-                return this.http.createCheckList(taskData.checkList);
+                return this.tasksService.createCheckList(taskData.checkList);
               })
             )
             .subscribe();
@@ -92,7 +99,7 @@ export class TasksPageComponent implements OnInit {
     const description = this.columns[columnIndex].tasks[taskIndex].description;
     let checkList: CheckList = [];
 
-    this.http.getCheckList(this.columns[columnIndex].tasks[taskIndex]._id).pipe(
+    this.tasksService.getCheckList(this.columns[columnIndex].tasks[taskIndex]._id).pipe(
       mergeMap((list: CheckList) => {
         checkList = list;
         return this.showTaskEditDialog('EDIT_TASK_DIALOG.TITLE', this.boardTitle ,this.columns[columnIndex].title, title, description, list);
@@ -106,7 +113,7 @@ export class TasksPageComponent implements OnInit {
 
         const newCheckList = taskData.checkList;
         const column = this.columns[columnIndex];
-        this.http.editTask(
+        this.tasksService.editTask(
             taskData.title,
             taskData.description,
             this.boardId,
@@ -123,21 +130,21 @@ export class TasksPageComponent implements OnInit {
               newCheckList.filter((newItem) => checkList.findIndex((item) => newItem._id === item._id && (newItem.title !== item.title || newItem.done !== item.done)) >= 0)
               .forEach((item) => {
                 if (item._id) {
-                  requestsList.push(this.http.editCheckItem(item._id, item.title, item.done));
+                  requestsList.push(this.tasksService.editCheckItem(item._id, item.title, item.done));
                 }
               });
               // to delete
               checkList.filter((item) => newCheckList.findIndex((newItem) => newItem._id === item._id) === -1)
               .forEach((item) => {
                 if (item._id) {
-                  requestsList.push(this.http.deleteCheckItem(item._id));
+                  requestsList.push(this.tasksService.deleteCheckItem(item._id));
                 }
               });
               // to create
               const newItems: CheckList = newCheckList.filter((newItem) => checkList.findIndex((item) => newItem._id === item._id) === -1);
               newItems.forEach((item) => { item.boardId = this.boardId; item.taskId = task._id });
               if (newItems.length > 0) {
-                requestsList.push(this.http.createCheckList(newItems));
+                requestsList.push(this.tasksService.createCheckList(newItems));
               }
               return forkJoin(requestsList);
             })
@@ -159,7 +166,7 @@ export class TasksPageComponent implements OnInit {
       next: (title) => {
         if (title) {
           const order = this.columns.length > 0 ? Math.max(...this.columns.map((column) => column.order)) + 1 : 0;
-          this.http.createColumn(title, order, this.boardId).subscribe({
+          this.columnsService.createColumn(title, order, this.boardId).subscribe({
             next: (column) => {
               this.columns.push({...column, editMode: false, tasks: []});
             }
@@ -170,7 +177,7 @@ export class TasksPageComponent implements OnInit {
   }
 
   editColumnTitle(title: string, index: number): void {
-    this.http.editColumn(title, this.columns[index].order, this.columns[index].boardId, this.columns[index]._id).subscribe({
+    this.columnsService.editColumn(title, this.columns[index].order, this.columns[index].boardId, this.columns[index]._id).subscribe({
       next: (column) => {
         this.columns[index].title = column.title;
       }
@@ -212,7 +219,7 @@ export class TasksPageComponent implements OnInit {
     .pipe(
       mergeMap((confirm) => {
         if (confirm) {
-          return this.http.deleteColumn(this.boardId, this.columns[columnIndex]._id);
+          return this.columnsService.deleteColumn(this.boardId, this.columns[columnIndex]._id);
         }
         return new Observable<void>;
       })
@@ -231,7 +238,7 @@ export class TasksPageComponent implements OnInit {
     .pipe(
       mergeMap((confirm) => {
         if (confirm) {
-          return this.http.deleteTask(this.boardId, columnId, taskId);
+          return this.tasksService.deleteTask(this.boardId, columnId, taskId);
         }
         return new Observable<void>;
       })
@@ -249,7 +256,7 @@ export class TasksPageComponent implements OnInit {
     }
     moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
     this.columns.forEach((column, index) => column.order = index);
-    this.http.updateColumnsOrder(this.columns).subscribe();
+    this.columnsService.updateColumnsOrder(this.columns).subscribe();
   }
 
   dropTask(event: CdkDragDrop<TasksColumn>): void {
@@ -275,7 +282,7 @@ export class TasksPageComponent implements OnInit {
       currentColumn.tasks.forEach((task, index) => task.order = index);
       updateTasksList = [...previousColumn.tasks, ...currentColumn.tasks];
     }
-    this.http.updateTasksOrder(updateTasksList).subscribe();
+    this.tasksService.updateTasksOrder(updateTasksList).subscribe();
   }
 
   columnTitleOnEnterKey(title: string, columnIndex: number): void {

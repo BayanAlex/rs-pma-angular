@@ -1,7 +1,7 @@
 import { Component, Output } from '@angular/core';
-import { HttpService } from 'src/app/services/http/http.service';
 import { AuthData } from 'src/app/interfaces/http.interfaces';
 import { AppService } from 'src/app/services/app.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 
 @Component({
@@ -13,7 +13,10 @@ import { AppService } from 'src/app/services/app.service';
 export class ProfilePageComponent {
   @Output() pendingRequest = false;
 
-  constructor(private http: HttpService, private app: AppService) { }
+  constructor(
+    private app: AppService,
+    private authService: AuthService,
+  ) { }
 
   deleteAccount(): void {
     this.app.showConfirmDialog('PROFILE_PAGE.DELETE_CONFIRM_TEXT', 'PROFILE_PAGE.DELETE_CONFIRM_TITLE').subscribe((confirm) => {
@@ -32,7 +35,7 @@ export class ProfilePageComponent {
 
   saveProfile(data: AuthData): void {
     this.pendingRequest = true;
-    this.http.saveProfile(this.app.user._id, data).subscribe({
+    this.authService.saveProfile(this.app.user._id, data).subscribe({
       next: (user) => {
         this.pendingRequest = false;
         this.app.updateUserData(user);
