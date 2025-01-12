@@ -10,42 +10,45 @@
 </div>
 <div class="columns-wrap">
   <div cdkDropList cdkDropListOrientation="horizontal" class="columns" (cdkDropListDropped)="dropColumn($event)" cdkDropListGroup [cdkDropListAutoScrollDisabled]="false">
-    <div *ngFor="let column of columns; let columnIndex = index" class="column" class="card-wrap">
-      <mat-card cdkDragLockAxis="x" cdkDrag [cdkDragStartDelay]="{ mouse: 0, touch: 500 }" class="overflow-hidden">
-        <mat-card-header class="!p-0 mb-[7px]">
-          <mat-toolbar color="primary" class="!py-[5px] !px-[12px] justify-between h-[58px]">
-            <div
-              [ngClass]="{'title-cover_hide': column.editMode}"
-              cdkDragHandle
-              class="title-cover"
-              [matTooltip]="'TASKS_PAGE.DRAG_TOOLTIP' | translate"
-              matTooltipShowDelay="1000"
-              (click)="setEditMode(columnIndex, true); titleInput.focus()"
-            >
-            </div>
-            <div *ngIf="column.editMode" class="column-edit-buttons flex gap-[10px]">
-              <button
-                mat-mini-fab
-                color="accent"
-                [disabled]="titleInput.value.length === 0"
-                onclick="this.blur()"
-                [matTooltip]="'DIALOG_BUTTONS.OK' | translate"
-                matTooltipShowDelay="500"
-                (click)="setEditMode(columnIndex, false); editColumnTitle(titleInput.value, columnIndex)"
+    @for (column of columns; track column._id; let columnIndex = $index) {
+      <div class="column" class="card-wrap">
+        <mat-card cdkDragLockAxis="x" cdkDrag [cdkDragStartDelay]="{ mouse: 0, touch: 500 }" class="overflow-hidden">
+          <mat-card-header class="!p-0 mb-[7px]">
+            <mat-toolbar color="primary" class="!py-[5px] !px-[12px] justify-between h-[58px]">
+              <div
+                [ngClass]="{'title-cover_hide': column.editMode}"
+                cdkDragHandle
+                class="title-cover"
+                [matTooltip]="'TASKS_PAGE.DRAG_TOOLTIP' | translate"
+                matTooltipShowDelay="1000"
+                (click)="setEditMode(columnIndex, true); titleInput.focus()"
               >
-                <mat-icon>done</mat-icon>
-              </button>
-              <button
-                mat-mini-fab
-                color="primary"
-                [matTooltip]="'DIALOG_BUTTONS.CANCEL' | translate"
-                matTooltipShowDelay="500"
-                onclick="this.blur()"
-                (click)="setEditMode(columnIndex, false); titleInput.value = column.title"
-              >
-                <mat-icon>close</mat-icon>
-              </button>
-            </div>
+              </div>
+              @if (column.editMode) {
+                <div class="column-edit-buttons flex gap-[10px]">
+                  <button
+                    mat-mini-fab
+                    color="accent"
+                    [disabled]="titleInput.value.length === 0"
+                    onclick="this.blur()"
+                    [matTooltip]="'DIALOG_BUTTONS.OK' | translate"
+                    matTooltipShowDelay="500"
+                    (click)="setEditMode(columnIndex, false); editColumnTitle(titleInput.value, columnIndex)"
+                  >
+                    <mat-icon>done</mat-icon>
+                  </button>
+                  <button
+                  mat-mini-fab
+                  color="primary"
+                  [matTooltip]="'DIALOG_BUTTONS.CANCEL' | translate"
+                  matTooltipShowDelay="500"
+                  onclick="this.blur()"
+                  (click)="setEditMode(columnIndex, false); titleInput.value = column.title"
+                >
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+            }
             <input
               matInput
               class="column-title"
@@ -56,17 +59,18 @@
               (keyup.enter)="titleInput.value.length > 0 ? titleInput.blur() : null"
               (keyup.esc)="setEditMode(columnIndex, false); titleInput.value = column.title; titleInput.blur()"
             />
-            <button
-              mat-icon-button
-              *ngIf="!column.editMode"
-              class="column-delete-button"
-              onclick="this.blur()"
-              (click)="deleteColumnClick($event, columnIndex)"
-              matTooltipShowDelay="500"
-              [matTooltip]="'TASKS_PAGE.COLUMN.DELETE_TOOLTIP' | translate"
-            >
-              <mat-icon>delete_forever</mat-icon>
-            </button>
+            @if (!column.editMode) {
+              <button
+                mat-icon-button
+                class="column-delete-button"
+                onclick="this.blur()"
+                (click)="deleteColumnClick($event, columnIndex)"
+                matTooltipShowDelay="500"
+                [matTooltip]="'TASKS_PAGE.COLUMN.DELETE_TOOLTIP' | translate"
+              >
+                <mat-icon>delete_forever</mat-icon>
+              </button>
+            }
           </mat-toolbar>
         </mat-card-header>
 
@@ -78,31 +82,34 @@
           (cdkDropListDropped)="dropTask($event)"
         >
           <div class="" [ngClass]="{'tasks': column.tasks.length > 0}">
-            <div
-              class="task"
-              *ngFor="let task of column.tasks; let taskIndex = index"
-              cdkDrag
-              [cdkDragStartDelay]="{ mouse: 0, touch: 500 }"
-              [matTooltip]="!isTouchScreen() ? ('TASKS_PAGE.DRAG_TOOLTIP' | translate) : null"
-              matTooltipShowDelay="1000"
-              onclick="this.blur()"
-              (click)="editTask(columnIndex, taskIndex)"
-            >
-              <div class="task-content">
-                <h3 class="task-title">{{ task.title }}</h3>
-                <p *ngIf="task.description" class="task-description opacity-60">{{ task.description }}</p>
-              </div>
-              <button
-                mat-icon-button
-                class="task-delete-button"
+            @for (task of column.tasks; track task._id; let taskIndex = $index) {
+              <div
+                class="task"
+                cdkDrag
+                [cdkDragStartDelay]="{ mouse: 0, touch: 500 }"
+                [matTooltip]="!isTouchScreen() ? ('TASKS_PAGE.DRAG_TOOLTIP' | translate) : null"
+                matTooltipShowDelay="1000"
                 onclick="this.blur()"
-                (click)="deleteTaskClick($event, columnIndex, taskIndex)"
-                matTooltipShowDelay="500"
-                [matTooltip]="'TASKS_PAGE.TASK.DELETE_TOOLTIP' | translate"
+                (click)="editTask(columnIndex, taskIndex)"
               >
-                <mat-icon class="opacity-60">playlist_remove</mat-icon>
-              </button>
-            </div>
+                <div class="task-content">
+                  <h3 class="task-title">{{ task.title }}</h3>
+                  @if (task.description) {
+                    <p class="task-description opacity-60">{{ task.description }}</p>
+                  }
+                </div>
+                <button
+                  mat-icon-button
+                  class="task-delete-button"
+                  onclick="this.blur()"
+                  (click)="deleteTaskClick($event, columnIndex, taskIndex)"
+                  matTooltipShowDelay="500"
+                  [matTooltip]="'TASKS_PAGE.TASK.DELETE_TOOLTIP' | translate"
+                >
+                  <mat-icon class="opacity-60">playlist_remove</mat-icon>
+                </button>
+              </div>
+            }
           </div>
         </mat-card-content>
 
@@ -112,5 +119,6 @@
 
       </mat-card>
     </div>
+  }
   </div>
 </div>

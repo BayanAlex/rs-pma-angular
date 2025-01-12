@@ -1,4 +1,4 @@
-<mat-card [routerLink]="['/boards', id]" class="block h-[210px] w-full cursor-pointer overflow-hidden">
+<mat-card [routerLink]="['/boards', id()]" class="block h-[210px] w-full cursor-pointer overflow-hidden">
   <mat-card-header class="!p-0">
     <mat-toolbar color="primary" class="h-fit justify-between !py-[5px] !px-[12px]">
       <button
@@ -20,6 +20,6 @@
     </mat-toolbar>
   </mat-card-header>
   <mat-card-content class="!flex justify-center items-center h-full">
-    <h3 class="whitespace-normal text-center overflow-auto !text-lg !font-medium">{{ title }}</h3>
+    <h3 class="whitespace-normal text-center overflow-auto !text-lg !font-medium">{{ title() }}</h3>
   </mat-card-content>
 </mat-card>

@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, viewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -18,7 +18,7 @@ export class HeaderComponent {
   searchResults: Task[] = [];
   searchFormControl = new FormControl('');
   darkMode = false;
-  @ViewChild('searchInput') searchInput: ElementRef;
+  readonly searchInput = viewChild<ElementRef>('searchInput');
 
   constructor (public translate: TranslateService, public app: AppService, public http: HttpService, public router: Router, private route: ActivatedRoute) {}
 
@@ -37,7 +37,7 @@ export class HeaderComponent {
   toggleSearchMode(): void {
     this.searchMode = !this.searchMode;
     if (this.searchMode) {
-      setTimeout(() => this.searchInput.nativeElement.focus(), 0);
+      setTimeout(() => this.searchInput()?.nativeElement.focus(), 0);
     }
   }
 

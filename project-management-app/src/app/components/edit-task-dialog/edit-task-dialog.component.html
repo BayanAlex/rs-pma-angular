@@ -30,31 +30,31 @@
       <div matListItemTitle>{{ 'EDIT_TASK_DIALOG.CHECKLIST_CAPTION' | translate }}</div>
     </div>
     <ul>
-      <ng-container *ngFor="let checkItem of checkList; let index = index">
-      <li class="flex items-center gap-[5px]">
-        <mat-checkbox #checkBox [(ngModel)]="checkItem.done" [name]="'checkBox' + index"></mat-checkbox>
-        <input
-          matInput
-          required
-          [(ngModel)]="checkItem.title"
-          [name]="'checkItemTitle' + index"
-          #checkItemTitle
-          [ngClass]="{ 'line-through text-gray-500': checkBox.checked}"
-          class="check-item-title flex-auto w-full p-[5px] text-black"
-        >
-        <button
-          mat-icon-button
-          [matTooltip]="'EDIT_TASK_DIALOG.DELETE_CHECK_TOOLTIP' | translate"
-          [matTooltipShowDelay]="500"
-          (click)="deleteCheckItem(index)"
-          onclick="this.blur()"
-          class="opacity-50"
-        >
-          <mat-icon>delete</mat-icon>
-        </button>
-      </li>
-      <mat-divider></mat-divider>
-      </ng-container>
+      @for (checkItem of checkList; track checkItem._id; let index = $index) {
+        <li class="flex items-center gap-[5px]">
+          <mat-checkbox #checkBox [(ngModel)]="checkItem.done" [name]="'checkBox' + index"></mat-checkbox>
+          <input
+            matInput
+            required
+            [(ngModel)]="checkItem.title"
+            [name]="'checkItemTitle' + index"
+            #checkItemTitle
+            [ngClass]="{ 'line-through text-gray-500': checkBox.checked}"
+            class="check-item-title flex-auto w-full p-[5px] text-black"
+          >
+          <button
+            mat-icon-button
+            [matTooltip]="'EDIT_TASK_DIALOG.DELETE_CHECK_TOOLTIP' | translate"
+            [matTooltipShowDelay]="500"
+            (click)="deleteCheckItem(index)"
+            onclick="this.blur()"
+            class="opacity-50"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </li>
+        <mat-divider></mat-divider>
+      }
     </ul>
   </form>
 </div>

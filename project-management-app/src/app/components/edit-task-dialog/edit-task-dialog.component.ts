@@ -1,4 +1,4 @@
-import { Component, Inject, ElementRef, ViewChildren, QueryList, HostListener } from '@angular/core';
+import { Component, Inject, ElementRef, HostListener, viewChildren } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CheckItem, CheckList, EditTaskData } from 'src/app/interfaces/app.interfaces';
 
@@ -9,13 +9,13 @@ import { CheckItem, CheckList, EditTaskData } from 'src/app/interfaces/app.inter
   standalone: false
 })
 export class EditTaskDialogComponent {
-  @ViewChildren('checkItemTitle') checkItemsInputs: QueryList<ElementRef>;
+  readonly checkItemsInputs = viewChildren<ElementRef>('checkItemTitle');
   checkList: CheckList;
   private titleInputBlured = false;
 
   constructor(public dialogRef: MatDialogRef<EditTaskDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: EditTaskData) {
-    this.checkList = data.checkList.map((item) => {return {...item}});
+    this.checkList = data.checkList.map((item) => ({...item}));
   }
 
   focus(event: Event): void {
@@ -38,7 +38,7 @@ export class EditTaskDialogComponent {
       done: false
     }
     this.checkList.push(item);
-    setTimeout(() => this.checkItemsInputs.toArray()[this.checkList.length -1].nativeElement.focus(), 0);
+    setTimeout(() => this.checkItemsInputs()[this.checkList.length -1].nativeElement.focus(), 0);
   }
 
   deleteCheckItem(index: number): void {

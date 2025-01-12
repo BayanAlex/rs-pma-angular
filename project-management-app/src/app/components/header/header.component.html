@@ -2,94 +2,107 @@
   <a [routerLink]="['/']" class="ml-[5px]"><img class="h-[35px]" src="/assets/images/logo.svg" alt=""></a>
   <div class="flex items-center justify-end gap-[10px] w-full">
     <form class="search-block" [ngClass]="{ 'search-block-w-full': searchMode }">
-      <input matInput
-        type="search"
-        *ngIf="app.isLoggedIn"
-        #searchInput
-        [formControl]="searchFormControl"
-        [matAutocomplete]="auto"
-        class="search text-black rounded px-3 h-10 text-base font-normal"
-        [ngClass]="{ 'full-width': searchMode, 'input-search-hide': !searchMode }"
-        [placeholder]="'INPUTS.PLACEHOLDERS.SEARCH' | translate"
-        (input)="onSearchInputChange($event)"
-      />
+      @if (app.isLoggedIn) {
+        <input matInput
+          type="search"
+          #searchInput
+          [formControl]="searchFormControl"
+          [matAutocomplete]="auto"
+          class="search text-black rounded px-3 h-10 text-base font-normal"
+          [ngClass]="{ 'full-width': searchMode, 'input-search-hide': !searchMode }"
+          [placeholder]="'INPUTS.PLACEHOLDERS.SEARCH' | translate"
+          (input)="onSearchInputChange($event)"
+        />
+      }
       <mat-autocomplete #auto="matAutocomplete">
-        <ng-container *ngFor="let task of searchResults; let index = index">
+        @for (task of searchResults; track task._id; let index = $index) {
           <mat-option class="max-w-full w-full" (click)="searchItemSelected(index)">
             <div class="search-item-wrap p-[10px] flex flex-col gap-[10px]">
               <h3 class="!m-0 text-base">{{ task.title }}</h3>
-              <p *ngIf="task.description !== ' '" class="!m-0 text-sm overflow-hidden whitespace-nowrap text-ellipsis max-w-full opacity-60">{{ task.description }}</p>
+              @if (task.description !== ' ') {
+                <p class="!m-0 text-sm overflow-hidden whitespace-nowrap text-ellipsis max-w-full opacity-60">{{ task.description }}</p>
+              }
             </div>
           </mat-option>
           <mat-divider></mat-divider>
-        </ng-container>
+        }
       </mat-autocomplete>
     </form >
-    <button
-      mat-mini-fab
-      color="primary"
-      *ngIf="app.isLoggedIn"
-      [ngClass]="{ 'button-search-hide': !searchMode }"
-      onclick="this.blur()"
-      (click)="toggleSearchMode()"
-      [matTooltip]="(searchMode ? 'HEADER.BUTTON.SEARCH_CLOSE' : 'HEADER.BUTTON.SEARCH') | translate">
-      <mat-icon>{{ searchMode ? 'close' : 'search' }}</mat-icon>
-    </button>
-    <ng-container *ngIf="!searchMode">
-      <button
-        mat-mini-fab
-        #createBoardBtn
-        color="primary"
-        *ngIf="router.url === '/boards'"
-        onclick="this.blur()"
-        (click)="createBoard()"
-        [matTooltip]="'HEADER.BUTTON.NEW_BOARD' | translate">
-        <mat-icon>add</mat-icon>
-      </button>
+    @if (app.isLoggedIn) {
       <button
         mat-mini-fab
         color="primary"
-        *ngIf="router.url.includes('/boards/')"
+        [ngClass]="{ 'button-search-hide': !searchMode }"
         onclick="this.blur()"
-        (click)="createColumn()"
-        [matTooltip]="'HEADER.BUTTON.NEW_COLUMN' | translate">
-        <mat-icon>post_add</mat-icon>
+        (click)="toggleSearchMode()"
+        [matTooltip]="(searchMode ? 'HEADER.BUTTON.SEARCH_CLOSE' : 'HEADER.BUTTON.SEARCH') | translate">
+        <mat-icon>{{ searchMode ? 'close' : 'search' }}</mat-icon>
       </button>
-      <button
-        mat-mini-fab color="primary"
-        *ngIf="router.url !== '/boards' && app.isLoggedIn"
-        [routerLink]="['/boards']"
-        onclick="this.blur()"
-        [matTooltip]="'HEADER.BUTTON.BOARDS' | translate">
-        <mat-icon>apps</mat-icon>
-      </button>
+    }
+    @if (!searchMode) {
+      @if (router.url === '/boards') {
+        <button
+          mat-mini-fab
+          #createBoardBtn
+          color="primary"
+          onclick="this.blur()"
+          (click)="createBoard()"
+          [matTooltip]="'HEADER.BUTTON.NEW_BOARD' | translate">
+          <mat-icon>add</mat-icon>
+        </button>
+      }
+      @if (router.url.includes('/boards/')) {
+        <button
+          mat-mini-fab
+          color="primary"
+          onclick="this.blur()"
+          (click)="createColumn()"
+          [matTooltip]="'HEADER.BUTTON.NEW_COLUMN' | translate">
+          <mat-icon>post_add</mat-icon>
+        </button>
+      }
+      @if (router.url !== '/boards' && app.isLoggedIn) {
+        <button
+          mat-mini-fab color="primary"
+          [routerLink]="['/boards']"
+          onclick="this.blur()"
+          [matTooltip]="'HEADER.BUTTON.BOARDS' | translate">
+          <mat-icon>apps</mat-icon>
+        </button>
+      }
       <mat-button-toggle-group class="lang-switcher h-10 text-base items-center" name="lang" aria-label="Choose language">
-        <mat-button-toggle
-          [checked]="lang === translate.currentLang"
-          (click)="app.setLanguage(i)"
-          *ngFor="let lang of app.langList; let i = index"
-          [value]="i"
-        >
-          {{ lang | uppercase }}
-        </mat-button-toggle>
+        @for (lang of app.langList; track lang; let i = $index) {
+          <mat-button-toggle
+            [checked]="lang === translate.currentLang"
+            (click)="app.setLanguage(i)"
+            [value]="i"
+          >
+            {{ lang | uppercase }}
+          </mat-button-toggle>
+        }
       </mat-button-toggle-group>
-    </ng-container>
-    <button mat-button *ngIf="!app.isLoggedIn" (click)="app.openSignUpPage()" class="signup">{{ 'HEADER.BUTTON.SIGNUP' | translate }}</button>
-    <button mat-raised-button *ngIf="!app.isLoggedIn" (click)="auth()" class="login" color="accent">{{ 'HEADER.BUTTON.LOGIN' | translate }}</button>
+    }
+    @if (!app.isLoggedIn) {
+      <button mat-button (click)="app.openSignUpPage()" class="signup">{{ 'HEADER.BUTTON.SIGNUP' | translate }}</button>
+      <button mat-raised-button (click)="auth()" class="login" color="accent">{{ 'HEADER.BUTTON.LOGIN' | translate }}</button>
+    }
 
     <mat-menu #appMenu="matMenu">
-      <div mat-menu-item *ngIf="app.isLoggedIn" class="[&>span]:max-w-full" disabled>
-        <p class="mat-headline-6 !mb-1 overflow-hidden text-ellipsis">{{ (app.userData$ | async)?.name }}</p>
-        <p class="mat-body opacity-50 !mb-2 overflow-hidden text-ellipsis">{{ (app.userData$ | async)?.login }}</p>
-      </div>
-      <button mat-menu-item *ngIf="app.isLoggedIn" (click)="app.openEditProfilePage()">
-        <mat-icon>manage_accounts</mat-icon>
-        {{ 'HEADER.BUTTON.PROFILE_PAGE' | translate }}
-      </button>
-      <button mat-menu-item *ngIf="!app.isLoggedIn" (click)="app.openSignUpPage()">
-        <mat-icon>how_to_reg</mat-icon>
-        {{ 'HEADER.BUTTON.SIGNUP' | translate }}
-      </button>
+      @if (app.isLoggedIn) {
+        <div mat-menu-item class="[&>span]:max-w-full" disabled>
+          <p class="mat-headline-6 !mb-1 overflow-hidden text-ellipsis">{{ (app.userData$ | async)?.name }}</p>
+          <p class="mat-body opacity-50 !mb-2 overflow-hidden text-ellipsis">{{ (app.userData$ | async)?.login }}</p>
+        </div>
+        <button mat-menu-item (click)="app.openEditProfilePage()">
+          <mat-icon>manage_accounts</mat-icon>
+          {{ 'HEADER.BUTTON.PROFILE_PAGE' | translate }}
+        </button>
+      } @else {
+        <button mat-menu-item (click)="app.openSignUpPage()">
+          <mat-icon>how_to_reg</mat-icon>
+          {{ 'HEADER.BUTTON.SIGNUP' | translate }}
+        </button>
+      }
       <button mat-menu-item class="lang-menu" [matMenuTriggerFor]="langMenu">
         <mat-icon>language</mat-icon>
         {{ 'HEADER.BUTTON.LANGUAGES' | translate }}
@@ -103,9 +116,11 @@
 
     <mat-menu #langMenu="matMenu">
       <mat-radio-group aria-label="Choose language">
-        <button mat-menu-item (click)="app.setLanguage(i)" *ngFor="let lang of app.langList; let i = index" [value]="i">
-          <mat-radio-button [checked]="lang === translate.currentLang" [value]="i">{{ 'LANGUAGES.' + (lang | uppercase) | translate }}</mat-radio-button>
-        </button>
+        @for (lang of app.langList; track lang; let i = $index) {
+          <button mat-menu-item (click)="app.setLanguage(i)" [value]="i">
+            <mat-radio-button [checked]="lang === translate.currentLang" [value]="i">{{ 'LANGUAGES.' + (lang | uppercase) | translate }}</mat-radio-button>
+          </button>
+        }
       </mat-radio-group>
     </mat-menu>
 
@@ -114,4 +129,6 @@
     </button>
   </div>
 </mat-toolbar>
-<mat-progress-bar *ngIf="http.httpRequestPending" mode="indeterminate"></mat-progress-bar>
+@if (http.httpRequestPending) {
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+}

@@ -7,7 +7,9 @@
       <div class="section-dev-skills">
         <h2>{{ 'WELCOME_PAGE.DEV.SKILLS.TITLE' | translate }}</h2>
         <ul class="skills-list">
-          <li class="skills-list-item" *ngFor="let i of skillsList"><mat-icon color="primary">check</mat-icon>{{ 'WELCOME_PAGE.DEV.SKILLS.' + i | translate }}</li>
+          @for (i of skillsList; track i) {
+            <li class="skills-list-item"><mat-icon color="primary">check</mat-icon>{{ 'WELCOME_PAGE.DEV.SKILLS.' + i | translate }}</li>
+          }
         </ul>
       </div>
       <a mat-raised-button color="accent" class="section-dev-more" target="_blank" href="https://bayanalex.github.io/rs-cv/">{{ 'WELCOME_PAGE.DEV.MORE_INFO' | translate }}</a>
@@ -28,7 +30,9 @@
     <div class="section-powered-content">
       <h2 class="text-center">{{ 'WELCOME_PAGE.TECH.TITLE' | translate }}</h2>
       <ul class="tech-list">
-        <li *ngFor="let tech of techList" class="tech-list-item"><span>{{ tech.value }}</span><img [src]="'/assets/icons/' + tech.src"></li>
+        @for (tech of techList; track tech) {
+          <li class="tech-list-item"><span>{{ tech.value }}</span><img [src]="'/assets/icons/' + tech.src"></li>
+        }
       </ul>
     </div>
   </section>

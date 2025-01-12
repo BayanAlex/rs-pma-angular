@@ -1,12 +1,13 @@
 <h2 class="text-center !m-0">{{ 'BOARDS_PAGE.TITLE' | translate }}</h2>
 <div class="boards">
-  <app-board
-    *ngFor="let board of boards; let i = index"
-    class="w-full"
-    [title]="board.title"
-    [id]="board._id"
-    [index]="i"
-    (deleteBoard)="deleteBoard($event)"
-    (editBoard)="editBoard($event)">
-  </app-board>
+  @for (board of boards; track board._id; let i = $index) {
+    <app-board
+      class="w-full"
+      [title]="board.title"
+      [id]="board._id"
+      [index]="i"
+      (deleteBoard)="deleteBoard($event)"
+      (editBoard)="editBoard($event)">
+    </app-board>
+  }
 </div>

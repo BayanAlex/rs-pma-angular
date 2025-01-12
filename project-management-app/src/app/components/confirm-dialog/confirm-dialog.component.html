@@ -1,4 +1,6 @@
-<h1 mat-dialog-title *ngIf="data.title" class="text-center">{{ data.title | translate }}</h1>
+@if (data.title) {
+  <h1 mat-dialog-title class="text-center">{{ data.title | translate }}</h1>
+}
 <div mat-dialog-content>
   <p>{{ data.text | translate }}</p>
 </div>

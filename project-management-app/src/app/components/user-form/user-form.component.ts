@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, OnInit, input, output } from '@angular/core';
 import { FormControl, FormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { AuthData } from 'src/app/interfaces/http.interfaces';
 import { InputsSettings, InputError } from 'src/app/interfaces/app.interfaces';
@@ -12,10 +12,10 @@ import { Subscription } from 'rxjs'
   standalone: false
 })
 export class UserFormComponent implements OnInit {
-  @Input() type: string;
-  @Input() pendingSubmit: boolean;
-  @Output() formSubmit: EventEmitter<AuthData> = new EventEmitter();
-  @Output() deleteAccount: EventEmitter<void> = new EventEmitter();
+  readonly type = input<string>();
+  readonly pendingSubmit = input<boolean>();
+  readonly formSubmit = output<AuthData>();
+  readonly deleteAccount = output<void>();
 
   form: FormGroup;
   hidePassword = true;
@@ -57,32 +57,32 @@ export class UserFormComponent implements OnInit {
     this.form = new FormGroup({
       login: new FormControl(
         '',
-        this.type === 'login' ? [Validators.required, Validators.maxLength(this.INPUT_MAXLENGTH)] : [
+        this.type() === 'login' ? [Validators.required, Validators.maxLength(this.INPUT_MAXLENGTH)] : [
           Validators.required,
           Validators.minLength(this.inputsSettings.login.minlength),
           Validators.maxLength(this.INPUT_MAXLENGTH),
           this.allowedSymbolsValidator()
         ]
       ),
-      username: this.type === 'login' ? new FormControl(null) : new FormControl(
+      username: this.type() === 'login' ? new FormControl(null) : new FormControl(
         '',
         [Validators.required, Validators.minLength(this.inputsSettings.username.minlength), Validators.maxLength(this.INPUT_MAXLENGTH)]
       ),
       password: new FormControl(
         '',
-        this.type === 'login' ? [Validators.required, Validators.maxLength(this.INPUT_MAXLENGTH), this.allowedSymbolsValidator()] : [
+        this.type() === 'login' ? [Validators.required, Validators.maxLength(this.INPUT_MAXLENGTH), this.allowedSymbolsValidator()] : [
           Validators.required, Validators.minLength(this.inputsSettings.password.minlength),
           this.passwordStrengthValidator(), Validators.maxLength(this.INPUT_MAXLENGTH),
           this.allowedSymbolsValidator()
         ]
       ),
-      repeatPassword: this.type === 'login' ? new FormControl(null) : new FormControl(
+      repeatPassword: this.type() === 'login' ? new FormControl(null) : new FormControl(
         '',
         [Validators.required, this.passwordsMatchValidator()]
       ),
     });
 
-    if (this.type === 'profile') {
+    if (this.type() === 'profile') {
       this.userDataSubscription = this.app.userData$.subscribe({
         next: (user) => {
           this.form.controls['login'].setValue(user.login);

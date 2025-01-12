@@ -2,7 +2,7 @@
   <mat-card class="max-w-[280px]">
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <mat-card-header class="flex justify-center mb-4">
-        <mat-card-title>{{ (type.toUpperCase() + '_PAGE.TITLE') | translate }}</mat-card-title>
+        <mat-card-title>{{ (type()!.toUpperCase() + '_PAGE.TITLE') | translate }}</mat-card-title>
       </mat-card-header>
 
       <mat-card-content class="flex flex-col">
@@ -10,7 +10,9 @@
             <mat-form-field appearance="fill" hideRequiredMarker class="w-full">
               <mat-label>{{ 'INPUTS.PLACEHOLDERS.' + translateGroup | translate }}:</mat-label>
               <input [formControlName]="name" [attr.disabled]="disabled" [autocomplete]="name" matInput>
-              <mat-error *ngIf="form.controls[name].invalid">{{ getInputErrorMessage(name, translateGroup).message | translate:getInputErrorMessage(name, translateGroup).value }}</mat-error>
+              @if (form.controls[name].invalid) {
+                <mat-error>{{ getInputErrorMessage(name, translateGroup).message | translate:getInputErrorMessage(name, translateGroup).value }}</mat-error>
+              }
             </mat-form-field>
           </ng-template>
 
@@ -21,65 +23,69 @@
               <button type="button" mat-icon-button matSuffix (click)="togglePassword(name)" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
                   <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
               </button>
-              <mat-error *ngIf="form.controls[name].invalid">{{ getInputErrorMessage(name, translateGroup).message | translate:getInputErrorMessage(name, translateGroup).value }}</mat-error>
+              @if (form.controls[name].invalid) {
+                <mat-error>{{ getInputErrorMessage(name, translateGroup).message | translate:getInputErrorMessage(name, translateGroup).value }}</mat-error>
+              }
             </mat-form-field>
           </ng-template>
 
           <ng-container *ngTemplateOutlet="textInputeTemplate; context: {
-            translateGroup: 'LOGIN',
-            name: 'login',
-            disabled: pendingSubmit ? true : null,
-            form: form
-          }">
-          </ng-container>
-
-          <ng-container *ngIf="type !== 'login'">
-            <ng-container *ngTemplateOutlet="textInputeTemplate; context: {
-              translateGroup: 'USERNAME',
-              name: 'username',
-              disabled: pendingSubmit ? true : null,
+              translateGroup: 'LOGIN',
+              name: 'login',
+              disabled: pendingSubmit() ? true : null,
               form: form
-            }">
-            </ng-container>
-          </ng-container>
+            }"
+          ></ng-container>
+          
+          @if (type() !== 'login') {
+            <ng-container *ngTemplateOutlet="textInputeTemplate; context: {
+                translateGroup: 'USERNAME',
+                name: 'username',
+                disabled: pendingSubmit() ? true : null,
+                form: form
+              }"
+            ></ng-container>
+          }
 
           <ng-container *ngTemplateOutlet="passwordInputeTemplate; context: {
             translateGroup: 'PASSWORD',
             name: 'password',
             autocomplete: 'new-password',
-            disabled: pendingSubmit ? true : null,
+            disabled: pendingSubmit() ? true : null,
             form: form,
             togglePassword: togglePassword,
             hidePassword: hidePassword
-          }">
-          </ng-container>
+          }"
+          ></ng-container>
 
-          <ng-container *ngIf="type !== 'login'">
+          @if (type() !== 'login') {
             <ng-container *ngTemplateOutlet="passwordInputeTemplate; context: {
                 translateGroup: 'REPEAT_PASSWORD',
                 name: 'repeatPassword',
                 autocomplete: 'new-password',
-                disabled: pendingSubmit ? true : null,
+                disabled: pendingSubmit() ? true : null,
                 form: form,
                 togglePassword: togglePassword,
                 hidePassword: hideRepeatPassword
-            }">
-            </ng-container>
-          </ng-container>
+              }"
+            ></ng-container>
+          }
 
         </mat-card-content>
         <mat-card-actions class="my-4 mx-2">
-          <button mat-raised-button color="accent" type="submit" [disabled]="form.invalid || pendingSubmit" class="w-full">{{ type.toUpperCase() + '_PAGE.SUBMIT_BUTTON' | translate }}</button>
+          <button mat-raised-button color="accent" type="submit" [disabled]="form.invalid || pendingSubmit()" class="w-full">{{ type()!.toUpperCase() + '_PAGE.SUBMIT_BUTTON' | translate }}</button>
         </mat-card-actions>
     </form>
 
-    <mat-expansion-panel *ngIf="type === 'profile'" (toggle)="hideDeleteUserButton = !hideDeleteUserButton">
-      <mat-expansion-panel-header>
-        <mat-panel-title>{{ 'PROFILE_PAGE.DELETE_EXPANSION_TITLE' | translate }}</mat-panel-title>
-      </mat-expansion-panel-header>
-      <mat-card-actions class="my-4 mx-2">
-        <button mat-raised-button color="warn" (click)="onDeleteAccount()" type="button" class="w-full">{{ 'PROFILE_PAGE.DELETE_BUTTON' | translate }}</button>
-      </mat-card-actions>
-    </mat-expansion-panel>
+    @if (type() === 'profile') {
+      <mat-expansion-panel (toggle)="hideDeleteUserButton = !hideDeleteUserButton">
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{ 'PROFILE_PAGE.DELETE_EXPANSION_TITLE' | translate }}</mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-card-actions class="my-4 mx-2">
+          <button mat-raised-button color="warn" (click)="onDeleteAccount()" type="button" class="w-full">{{ 'PROFILE_PAGE.DELETE_BUTTON' | translate }}</button>
+        </mat-card-actions>
+      </mat-expansion-panel>
+    }
   </mat-card>
 </div>
