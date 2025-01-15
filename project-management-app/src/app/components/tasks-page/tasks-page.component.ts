@@ -32,29 +32,23 @@ export class TasksPageComponent implements OnInit {
     private route: ActivatedRoute,
     private dialog: MatDialog
   ) {
-    this.showTaskSubscription = this.appService.showTask$.subscribe({
-      next: (taskData) => {
-        const boardId = this.route.snapshot.url[this.route.snapshot.url.length - 1].path;
-        if (boardId !== this.boardId) {
-          this.boardId = boardId;
-          this.boardTitle = this.route.snapshot.data['tasksPageData']['boardTitle'];
-          this.assignColumns(this.route.snapshot.data['tasksPageData']['tasksColumns']);
-        }
-        const columnIndex = this.columns.findIndex((column: Column) => column._id === taskData.columnId);
-        if (columnIndex >= 0) {
-          const taskIndex = this.columns[columnIndex].tasks.findIndex((task: Task) => task._id === taskData.taskId);
-          if (taskIndex >= 0) {
-            this.editTask(columnIndex, taskIndex);
-          }
+    this.showTaskSubscription = this.appService.showTask$.subscribe((taskData) => {
+      const boardId = this.route.snapshot.url[this.route.snapshot.url.length - 1].path;
+      if (boardId !== this.boardId) {
+        this.boardId = boardId;
+        this.boardTitle = this.route.snapshot.data['tasksPageData']['boardTitle'];
+        this.assignColumns(this.route.snapshot.data['tasksPageData']['tasksColumns']);
+      }
+      const columnIndex = this.columns.findIndex((column: Column) => column._id === taskData.columnId);
+      if (columnIndex >= 0) {
+        const taskIndex = this.columns[columnIndex].tasks.findIndex((task: Task) => task._id === taskData.taskId);
+        if (taskIndex >= 0) {
+          this.editTask(columnIndex, taskIndex);
         }
       }
     });
 
-    this.createColumnSubscription = this.appService.createColumn$.subscribe({
-      next: () => {
-        this.createColumn();
-      }
-    });
+    this.createColumnSubscription = this.appService.createColumn$.subscribe(() => this.createColumn());
   }
 
   ngOnInit(): void {
@@ -73,8 +67,8 @@ export class TasksPageComponent implements OnInit {
   }
 
   createTask(columnIndex: number): void {
-    this.showTaskEditDialog('NEW_TASK_DIALOG.TITLE', this.boardTitle, this.columns[columnIndex].title).subscribe({
-      next: (taskData: EditTaskResult) => {
+    this.showTaskEditDialog('NEW_TASK_DIALOG.TITLE', this.boardTitle, this.columns[columnIndex].title)
+      .subscribe((taskData: EditTaskResult) => {
         if (taskData) {
           const order = this.columns[columnIndex].tasks.length > 0 ? Math.max(...this.columns[columnIndex].tasks.map((task) => task.order)) + 1 : 0;
           const columnId = this.columns[columnIndex]._id;
@@ -92,8 +86,7 @@ export class TasksPageComponent implements OnInit {
             )
             .subscribe();
         }
-      }
-    });
+      });
   }
 
   editTask(columnIndex: number, taskIndex: number): void {
@@ -107,8 +100,7 @@ export class TasksPageComponent implements OnInit {
         return this.showTaskEditDialog('EDIT_TASK_DIALOG.TITLE', this.boardTitle ,this.columns[columnIndex].title, title, description, list);
       })
     )
-    .subscribe({
-      next: (taskData: EditTaskResult) => {
+    .subscribe((taskData: EditTaskResult) => {
         if (!taskData) {
           return;
         }
@@ -116,43 +108,42 @@ export class TasksPageComponent implements OnInit {
         const newCheckList = taskData.checkList;
         const column = this.columns[columnIndex];
         this.tasksService.editTask(
-            taskData.title,
-            taskData.description,
-            this.boardId,
-            column._id,
-            column.tasks[taskIndex]._id,
-            column.order,
-            this.authService.user()!._id
-          )
-          .pipe(
-            mergeMap((task: Task) => {
-              const requestsList: Observable<any>[] = [];
-              this.columns[columnIndex].tasks[taskIndex] = task;
-              // to edit
-              newCheckList.filter((newItem) => checkList.findIndex((item) => newItem._id === item._id && (newItem.title !== item.title || newItem.done !== item.done)) >= 0)
+          taskData.title,
+          taskData.description,
+          this.boardId,
+          column._id,
+          column.tasks[taskIndex]._id,
+          column.order,
+          this.authService.user()!._id
+        ).pipe(
+          mergeMap((task: Task) => {
+            const requestsList: Observable<any>[] = [];
+            this.columns[columnIndex].tasks[taskIndex] = task;
+            // to edit
+            newCheckList.filter((newItem) => checkList.findIndex((item) => newItem._id === item._id && (newItem.title !== item.title || newItem.done !== item.done)) >= 0)
               .forEach((item) => {
                 if (item._id) {
                   requestsList.push(this.tasksService.editCheckItem(item._id, item.title, item.done));
                 }
               });
-              // to delete
-              checkList.filter((item) => newCheckList.findIndex((newItem) => newItem._id === item._id) === -1)
+            // to delete
+            checkList.filter((item) => newCheckList.findIndex((newItem) => newItem._id === item._id) === -1)
               .forEach((item) => {
                 if (item._id) {
                   requestsList.push(this.tasksService.deleteCheckItem(item._id));
                 }
               });
-              // to create
-              const newItems: CheckList = newCheckList.filter((newItem) => checkList.findIndex((item) => newItem._id === item._id) === -1);
-              newItems.forEach((item) => { item.boardId = this.boardId; item.taskId = task._id });
-              if (newItems.length > 0) {
-                requestsList.push(this.tasksService.createCheckList(newItems));
-              }
-              return forkJoin(requestsList);
-            })
-          ).subscribe();
-      }
-    });
+            // to create
+            const newItems: CheckList = newCheckList.filter((newItem) => checkList.findIndex((item) => newItem._id === item._id) === -1);
+            newItems.forEach((item) => { item.boardId = this.boardId; item.taskId = task._id });
+            if (newItems.length > 0) {
+              requestsList.push(this.tasksService.createCheckList(newItems));
+            }
+            return forkJoin(requestsList);
+          })
+        )
+        .subscribe();
+      });
   }
 
   assignColumns(tasksColumns: TasksColumn[]): void {
@@ -164,26 +155,20 @@ export class TasksPageComponent implements OnInit {
   }
 
   createColumn(): void {
-    this.showColumnEditDialog('NEW_COLUMN_DIALOG.TITLE').subscribe({
-      next: (title) => {
-        if (title) {
-          const order = this.columns.length > 0 ? Math.max(...this.columns.map((column) => column.order)) + 1 : 0;
-          this.columnsService.createColumn(title, order, this.boardId).subscribe({
-            next: (column) => {
-              this.columns.push({...column, editMode: false, tasks: []});
-            }
-          });
-        }
+    this.showColumnEditDialog('NEW_COLUMN_DIALOG.TITLE').subscribe((title) => {
+      if (title) {
+        const order = this.columns.length > 0 ? Math.max(...this.columns.map((column) => column.order)) + 1 : 0;
+        this.columnsService.createColumn(title, order, this.boardId)
+          .subscribe((column) => this.columns.push({...column, editMode: false, tasks: []}));
       }
     });
   }
 
   editColumnTitle(title: string, index: number): void {
-    this.columnsService.editColumn(title, this.columns[index].order, this.columns[index].boardId, this.columns[index]._id).subscribe({
-      next: (column) => {
+    this.columnsService.editColumn(title, this.columns[index].order, this.columns[index].boardId, this.columns[index]._id)
+      .subscribe((column) => {
         this.columns[index].title = column.title;
-      }
-    });
+      });
   }
 
   showColumnEditDialog(dialogTitle: string, title: string = ''): Observable<string> {
@@ -218,18 +203,15 @@ export class TasksPageComponent implements OnInit {
 
   deleteColumnClick(event: Event, columnIndex: number): void {
     this.appService.showConfirmDialog('TASKS_PAGE.COLUMN.DELETE_DIALOG.TEXT', 'TASKS_PAGE.COLUMN.DELETE_DIALOG.CAPTION')
-    .pipe(
-      mergeMap((confirm) => {
-        if (confirm) {
-          return this.columnsService.deleteColumn(this.boardId, this.columns[columnIndex]._id);
-        }
-        return new Observable<void>;
-      })
-    ).subscribe({
-      next: () => {
-        this.columns.splice(columnIndex, 1);
-      }
-    });
+      .pipe(
+        mergeMap((confirm) => {
+          if (confirm) {
+            return this.columnsService.deleteColumn(this.boardId, this.columns[columnIndex]._id);
+          }
+          return new Observable<void>;
+        })
+      )
+      .subscribe(() => this.columns.splice(columnIndex, 1));
     event.stopPropagation();
   }
 
@@ -237,18 +219,15 @@ export class TasksPageComponent implements OnInit {
     const columnId: string = this.columns[columnIndex]._id;
     const taskId: string = this.columns[columnIndex].tasks[taskIndex]._id;
     this.appService.showConfirmDialog('TASKS_PAGE.TASK.DELETE_DIALOG.TEXT', 'TASKS_PAGE.TASK.DELETE_DIALOG.CAPTION')
-    .pipe(
-      mergeMap((confirm) => {
-        if (confirm) {
-          return this.tasksService.deleteTask(this.boardId, columnId, taskId);
-        }
-        return new Observable<void>;
-      })
-    ).subscribe({
-      next: () => {
-        this.columns[columnIndex].tasks.splice(taskIndex, 1);
-      }
-    });
+      .pipe(
+        mergeMap((confirm) => {
+          if (confirm) {
+            return this.tasksService.deleteTask(this.boardId, columnId, taskId);
+          }
+          return new Observable<void>;
+        })
+      )
+      .subscribe(() => this.columns[columnIndex].tasks.splice(taskIndex, 1));
     event.stopPropagation();
   }
 

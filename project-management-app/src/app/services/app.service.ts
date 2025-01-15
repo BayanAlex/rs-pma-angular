@@ -57,16 +57,12 @@ export class AppService {
 
   login(data: AuthData): Observable<User> {
     return this.authService.login(data)
-      .pipe(
-        tap(() => this.gotoPage('/boards'))
-      );
+      .pipe(tap(() => this.gotoPage('/boards')));
   }
 
   deleteAccount(): Observable<void> {
     return this.authService.deleteAccount(this.authService.user()!._id)
-      .pipe(
-        map(() => this.authService.logout())
-      );
+      .pipe(map(() => this.authService.logout()));
   }
 
   setLanguage(index: number): void {
@@ -91,19 +87,17 @@ export class AppService {
   }
 
   showMessage(text: string, buttonCaption = 'DIALOG_BUTTONS.CLOSE'): void {
-    this.translate.get([text, buttonCaption]).subscribe({
-      next: (result) => this.showSnackBar(result[text], result[buttonCaption])
-    });
+    this.translate.get([text, buttonCaption])
+      .subscribe((result) => this.showSnackBar(result[text], result[buttonCaption]));
   }
 
   showErrorMessage(error: Error, buttonCaption = 'DIALOG_BUTTONS.CLOSE'): void {
     const errorPath = `ERRORS.${error.cause}`;
-    this.translate.get([errorPath, buttonCaption]).subscribe({
-      next: (result) => {
+    this.translate.get([errorPath, buttonCaption])
+      .subscribe((result) => {
         const text = result[errorPath] !== errorPath ? result[errorPath] : error.message;
         this.showSnackBar(text, result[buttonCaption]);
-      }
-    });
+      });
   }
 
   showConfirmDialog(text: string, title = ''): Observable<boolean> {

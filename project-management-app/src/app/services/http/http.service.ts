@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
@@ -8,7 +8,7 @@ type ErrorCode = 'BOARD' | 'COLUMN' | 'TASK' | 'POINT' | 'PROFILE' | 'DELETE_USE
 
 @Injectable()
 export class HttpService {
-  public httpRequestPending = false;
+  public httpRequestPending = signal<boolean>(false);
 
   private serverUrl = 'https://striped-ship-production.up.railway.app';
   private httpOptions = {

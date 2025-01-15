@@ -1,4 +1,4 @@
-import { Component, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { AuthData } from 'src/app/interfaces/http.interfaces';
 import { AppService } from 'src/app/services/app.service';
 import { AuthService } from 'src/app/services/auth.service';
@@ -11,7 +11,6 @@ import { AuthService } from 'src/app/services/auth.service';
   standalone: false
 })
 export class ProfilePageComponent {
-  @Output() pendingRequest = false;
 
   constructor(
     private appService: AppService,
@@ -21,14 +20,7 @@ export class ProfilePageComponent {
   deleteAccount(): void {
     this.appService.showConfirmDialog('PROFILE_PAGE.DELETE_CONFIRM_TEXT', 'PROFILE_PAGE.DELETE_CONFIRM_TITLE').subscribe((confirm) => {
       if (confirm) {
-        this.pendingRequest = true;
-        this.appService.deleteAccount().subscribe({
-          next: () => this.pendingRequest = false,
-          error: (error) => {
-            this.pendingRequest = false;
-            throw error;
-          }
-        });
+        this.appService.deleteAccount().subscribe();
       }
     });
   }
@@ -36,16 +28,8 @@ export class ProfilePageComponent {
   saveProfile(data: AuthData): void {
     if (!this.authService.user())
       return;
-    this.pendingRequest = true;
-    this.authService.saveProfile(this.authService.user()!._id, data).subscribe({
-      next: () => {
-        this.pendingRequest = false;
-        this.appService.showMessage('PROFILE_PAGE.SAVED_MESSAGE');
-      },
-      error: (error) => {
-        this.pendingRequest = false;
-        throw error;
-      }
+    this.authService.saveProfile(this.authService.user()!._id, data).subscribe(() => {
+      this.appService.showMessage('PROFILE_PAGE.SAVED_MESSAGE');
     });
   }
 }

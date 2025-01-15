@@ -27,17 +27,8 @@ export class BoardsPageComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.route.data.subscribe({
-      next: (data) => {
-        this.boards = data['boards'];
-      }
-    });
-
-    this.createBoardSubscription = this.appService.createBoard$.subscribe({
-      next: () => {
-        this.createBoard();
-      }
-    });
+    this.route.data.subscribe((data) => this.boards = data['boards']);
+    this.createBoardSubscription = this.appService.createBoard$.subscribe(() => this.createBoard());
   }
 
   ngOnDestroy(): void {
@@ -50,40 +41,28 @@ export class BoardsPageComponent implements OnInit, OnDestroy {
   }
 
   createBoard(): void {
-    this.showEditDialog('NEW_BOARD_DIALOG.TITLE', '').subscribe({
-      next: (result) => {
-        if (result) {
-          this.boardsService.createBoard(result, this.authService.user()!._id).subscribe({
-            next: (board) => {
-              this.boards.push(board);
-            }
-          });
-        }
+    this.showEditDialog('NEW_BOARD_DIALOG.TITLE', '').subscribe((result) => {
+      if (result) {
+        this.boardsService.createBoard(result, this.authService.user()!._id)
+          .subscribe((board) => this.boards.push(board));
       }
     });
   }
 
   deleteBoard(id: string): void {
-    this.boardsService.deleteBoard(id).subscribe({
-      next: () => {
-        const index = this.boards.findIndex((board) => board._id === id);
-        this.boards.splice(index, 1);
-      }
+    this.boardsService.deleteBoard(id).subscribe(() => {
+      const index = this.boards.findIndex((board) => board._id === id);
+      this.boards.splice(index, 1);
     });
   }
 
   editBoard(id: string): void {
     const index = this.boards.findIndex((board) => board._id === id);
     const title = this.boards[index].title;
-    this.showEditDialog('EDIT_BOARD_DIALOG.TITLE', title).subscribe({
-      next: (newTitle) => {
-        if (newTitle) {
-          this.boardsService.editBoard(id, newTitle, this.authService.user()!._id).subscribe({
-            next: (board) => {
-              this.boards[index].title = board.title;
-            }
-          });
-        }
+    this.showEditDialog('EDIT_BOARD_DIALOG.TITLE', title).subscribe((newTitle) => {
+      if (newTitle) {
+        this.boardsService.editBoard(id, newTitle, this.authService.user()!._id)
+          .subscribe((board) => this.boards[index].title = board.title);
       }
     });
   }

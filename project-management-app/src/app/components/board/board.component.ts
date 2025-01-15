@@ -17,13 +17,12 @@ export class BoardComponent {
   constructor(private appService: AppService) {}
 
   deleteClick(event: Event): void {
-    this.appService.showConfirmDialog('BOARDS_PAGE.DELETE_DIALOG.TEXT', 'BOARDS_PAGE.DELETE_DIALOG.CAPTION').subscribe({
-      next: (confirm) => {
+    this.appService.showConfirmDialog('BOARDS_PAGE.DELETE_DIALOG.TEXT', 'BOARDS_PAGE.DELETE_DIALOG.CAPTION')
+      .subscribe((confirm) => {
         if (confirm) {
           this.deleteBoard.emit(this.id()!);
         }
-      }
-    });
+      });
     event.stopPropagation();
   }
 

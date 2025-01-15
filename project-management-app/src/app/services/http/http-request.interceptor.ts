@@ -17,7 +17,7 @@ export class HttpRequestInterceptor implements HttpInterceptor {
     if(request.url.includes('/assets')) { // filter Ngx requests
       return next.handle(request);
     }
-    this.httpService.httpRequestPending = true;
+    this.httpService.httpRequestPending.set(true);
     this.requestsCount += 1;
     const authToken = `Bearer ${this.authService.token}`;
     const authRequest = request.clone({
@@ -28,7 +28,7 @@ export class HttpRequestInterceptor implements HttpInterceptor {
       finalize(() => {
         this.requestsCount -= 1;
         if (this.requestsCount === 0) {
-          this.httpService.httpRequestPending = false;
+          this.httpService.httpRequestPending.set(false);
         }
       })
     );

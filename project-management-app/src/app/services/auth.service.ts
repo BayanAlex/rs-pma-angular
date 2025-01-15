@@ -75,13 +75,6 @@ export class AuthService {
     return this.httpService.delete(`users/${userId}`, 'DELETE_USER');
   }
 
-  loadTokenFromStorage(): string {
-    const token = localStorage.getItem('token');
-    if (token)
-      this._token = token;
-    return this._token;
-  }
-
   initUser() {
     return firstValueFrom(this.getUser());
   }

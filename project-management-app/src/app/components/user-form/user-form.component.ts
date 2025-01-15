@@ -2,8 +2,8 @@ import { Component, OnInit, effect, input, output } from '@angular/core';
 import { FormControl, FormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { AuthData } from 'src/app/interfaces/http.interfaces';
 import { InputsSettings, InputError } from 'src/app/interfaces/app.interfaces';
-import { Subscription } from 'rxjs'
 import { AuthService } from 'src/app/services/auth.service';
+import { HttpService } from 'src/app/services/http/http.service';
 
 @Component({
   selector: 'app-user-form',
@@ -13,18 +13,18 @@ import { AuthService } from 'src/app/services/auth.service';
 })
 export class UserFormComponent implements OnInit {
   readonly type = input<string>();
-  readonly pendingSubmit = input<boolean>();
   readonly formSubmit = output<AuthData>();
   readonly deleteAccount = output<void>();
+  readonly pendingSubmit = this.httpService.httpRequestPending;
 
   form: FormGroup;
   hidePassword = true;
   hideRepeatPassword = true;
   hideDeleteUserButton = true;
-  userDataSubscription: Subscription;
 
   constructor(
-    private authService: AuthService
+    private authService: AuthService,
+    private httpService: HttpService
   ) {
     effect(() => {
       if (this.authService.user() && this.type() === 'profile') {

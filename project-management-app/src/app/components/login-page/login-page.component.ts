@@ -1,4 +1,4 @@
-import { Component, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { AuthData } from 'src/app/interfaces/http.interfaces';
 import { AppService } from 'src/app/services/app.service';
 
@@ -9,19 +9,10 @@ import { AppService } from 'src/app/services/app.service';
   standalone: false
 })
 export class LoginPageComponent {
-  @Output() pendingRequest = false;
-
   constructor(private appService: AppService) { }
 
   login(data: AuthData): void {
     delete data.name;
-    this.pendingRequest = true;
-    this.appService.login(data).subscribe({
-      next: () => {},
-      error: (error) => {
-        this.pendingRequest = false;
-        throw error;
-      }
-    });
+    this.appService.login(data).subscribe();
   }
 }

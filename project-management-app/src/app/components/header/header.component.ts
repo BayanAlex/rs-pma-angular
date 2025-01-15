@@ -15,11 +15,12 @@ import { TasksService } from 'src/app/services/tasks.service';
   standalone: false
 })
 export class HeaderComponent {
+  readonly searchInput = viewChild<ElementRef>('searchInput');
+
   searchMode = false;
   searchTimer: ReturnType<typeof setTimeout>;
   searchResults: Task[] = [];
   searchFormControl = new FormControl('');
-  readonly searchInput = viewChild<ElementRef>('searchInput');
   isLoggedIn = this.authService.isLoggedIn;
 
   constructor (
@@ -73,11 +74,8 @@ export class HeaderComponent {
   searchTask(value: string): void {
     if (!this.authService.user())
       return;
-    this.tasksService.searchTask(value, this.authService.user()!._id).subscribe({
-      next: (tasks: Task[]) => {
-        this.searchResults = tasks;
-      }
-    });
+    this.tasksService.searchTask(value, this.authService.user()!._id)
+      .subscribe((tasks: Task[]) => this.searchResults = tasks);
   }
 
   onSearchInputChange(event: Event): void {
