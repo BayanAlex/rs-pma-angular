@@ -9,6 +9,7 @@ import { EditTaskDialogComponent } from '../edit-task-dialog/edit-task-dialog.co
 import { EditTitleDialogComponent } from '../edit-title-dialog/edit-title-dialog.component';
 import { TasksService } from 'src/app/services/tasks.service';
 import { ColumnsService } from 'src/app/services/columns.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-tasks-page',
@@ -24,13 +25,14 @@ export class TasksPageComponent implements OnInit {
   showTaskSubscription: Subscription;
 
   constructor(
-    private app: AppService,
+    private appService: AppService,
     private columnsService: ColumnsService,
     private tasksService: TasksService,
+    private authService: AuthService,
     private route: ActivatedRoute,
     private dialog: MatDialog
   ) {
-    this.showTaskSubscription = this.app.showTask$.subscribe({
+    this.showTaskSubscription = this.appService.showTask$.subscribe({
       next: (taskData) => {
         const boardId = this.route.snapshot.url[this.route.snapshot.url.length - 1].path;
         if (boardId !== this.boardId) {
@@ -48,7 +50,7 @@ export class TasksPageComponent implements OnInit {
       }
     });
 
-    this.createColumnSubscription = this.app.createColumn$.subscribe({
+    this.createColumnSubscription = this.appService.createColumn$.subscribe({
       next: () => {
         this.createColumn();
       }
@@ -77,7 +79,7 @@ export class TasksPageComponent implements OnInit {
           const order = this.columns[columnIndex].tasks.length > 0 ? Math.max(...this.columns[columnIndex].tasks.map((task) => task.order)) + 1 : 0;
           const columnId = this.columns[columnIndex]._id;
           this.tasksService
-            .createTask(taskData.title, taskData.description, this.boardId, columnId, order, this.app.user._id)
+            .createTask(taskData.title, taskData.description, this.boardId, columnId, order, this.authService.user()!._id)
             .pipe(
               mergeMap((task: Task) => {
                 this.columns[columnIndex].tasks.push(task);
@@ -120,7 +122,7 @@ export class TasksPageComponent implements OnInit {
             column._id,
             column.tasks[taskIndex]._id,
             column.order,
-            this.app.user._id
+            this.authService.user()!._id
           )
           .pipe(
             mergeMap((task: Task) => {
@@ -215,7 +217,7 @@ export class TasksPageComponent implements OnInit {
   }
 
   deleteColumnClick(event: Event, columnIndex: number): void {
-    this.app.showConfirmDialog('TASKS_PAGE.COLUMN.DELETE_DIALOG.TEXT', 'TASKS_PAGE.COLUMN.DELETE_DIALOG.CAPTION')
+    this.appService.showConfirmDialog('TASKS_PAGE.COLUMN.DELETE_DIALOG.TEXT', 'TASKS_PAGE.COLUMN.DELETE_DIALOG.CAPTION')
     .pipe(
       mergeMap((confirm) => {
         if (confirm) {
@@ -234,7 +236,7 @@ export class TasksPageComponent implements OnInit {
   deleteTaskClick(event: Event, columnIndex: number, taskIndex: number): void {
     const columnId: string = this.columns[columnIndex]._id;
     const taskId: string = this.columns[columnIndex].tasks[taskIndex]._id;
-    this.app.showConfirmDialog('TASKS_PAGE.TASK.DELETE_DIALOG.TEXT', 'TASKS_PAGE.TASK.DELETE_DIALOG.CAPTION')
+    this.appService.showConfirmDialog('TASKS_PAGE.TASK.DELETE_DIALOG.TEXT', 'TASKS_PAGE.TASK.DELETE_DIALOG.CAPTION')
     .pipe(
       mergeMap((confirm) => {
         if (confirm) {

@@ -2,7 +2,7 @@
   <a [routerLink]="['/']" class="ml-[5px]"><img class="h-[35px]" src="/assets/images/logo.svg" alt=""></a>
   <div class="flex items-center justify-end gap-[10px] w-full">
     <form class="search-block" [ngClass]="{ 'search-block-w-full': searchMode }">
-      @if (app.isLoggedIn) {
+      @if (isLoggedIn()) {
         <input matInput
           type="search"
           #searchInput
@@ -28,7 +28,7 @@
         }
       </mat-autocomplete>
     </form >
-    @if (app.isLoggedIn) {
+    @if (isLoggedIn()) {
       <button
         mat-mini-fab
         color="primary"
@@ -61,7 +61,7 @@
           <mat-icon>post_add</mat-icon>
         </button>
       }
-      @if (router.url !== '/boards' && app.isLoggedIn) {
+      @if (router.url !== '/boards' && isLoggedIn()) {
         <button
           mat-mini-fab color="primary"
           [routerLink]="['/boards']"
@@ -71,10 +71,10 @@
         </button>
       }
       <mat-button-toggle-group class="lang-switcher h-10 text-base items-center" name="lang" aria-label="Choose language">
-        @for (lang of app.langList; track lang; let i = $index) {
+        @for (lang of appService.langList; track lang; let i = $index) {
           <mat-button-toggle
             [checked]="lang === translate.currentLang"
-            (click)="app.setLanguage(i)"
+            (click)="appService.setLanguage(i)"
             [value]="i"
           >
             {{ lang | uppercase }}
@@ -82,23 +82,23 @@
         }
       </mat-button-toggle-group>
     }
-    @if (!app.isLoggedIn) {
-      <button mat-button (click)="app.openSignUpPage()" class="signup">{{ 'HEADER.BUTTON.SIGNUP' | translate }}</button>
+    @if (!isLoggedIn()) {
+      <button mat-button (click)="appService.openSignUpPage()" class="signup">{{ 'HEADER.BUTTON.SIGNUP' | translate }}</button>
       <button mat-raised-button (click)="auth()" class="login" color="accent">{{ 'HEADER.BUTTON.LOGIN' | translate }}</button>
     }
 
     <mat-menu #appMenu="matMenu">
-      @if (app.isLoggedIn) {
+      @if (isLoggedIn()) {
         <div mat-menu-item class="[&>span]:max-w-full" disabled>
-          <p class="mat-headline-6 !mb-1 overflow-hidden text-ellipsis">{{ (app.userData$ | async)?.name }}</p>
-          <p class="mat-body opacity-50 !mb-2 overflow-hidden text-ellipsis">{{ (app.userData$ | async)?.login }}</p>
+          <p class="mat-headline-6 !mb-1 overflow-hidden text-ellipsis">{{ authService.user()?.name }}</p>
+          <p class="mat-body opacity-50 !mb-2 overflow-hidden text-ellipsis">{{ authService.user()?.login }}</p>
         </div>
-        <button mat-menu-item (click)="app.openEditProfilePage()">
+        <button mat-menu-item (click)="appService.openEditProfilePage()">
           <mat-icon>manage_accounts</mat-icon>
           {{ 'HEADER.BUTTON.PROFILE_PAGE' | translate }}
         </button>
       } @else {
-        <button mat-menu-item (click)="app.openSignUpPage()">
+        <button mat-menu-item (click)="appService.openSignUpPage()">
           <mat-icon>how_to_reg</mat-icon>
           {{ 'HEADER.BUTTON.SIGNUP' | translate }}
         </button>
@@ -109,23 +109,23 @@
       </button>
       <mat-divider></mat-divider>
       <button mat-menu-item (click)="auth()" >
-        <mat-icon>{{ app.isLoggedIn ? 'logout' : 'login' }}</mat-icon>
-        {{ app.isLoggedIn ? ('HEADER.BUTTON.LOGOUT' | translate) : ('HEADER.BUTTON.LOGIN' | translate) }}
+        <mat-icon>{{ isLoggedIn() ? 'logout' : 'login' }}</mat-icon>
+        {{ isLoggedIn() ? ('HEADER.BUTTON.LOGOUT' | translate) : ('HEADER.BUTTON.LOGIN' | translate) }}
       </button>
     </mat-menu>
 
     <mat-menu #langMenu="matMenu">
       <mat-radio-group aria-label="Choose language">
-        @for (lang of app.langList; track lang; let i = $index) {
-          <button mat-menu-item (click)="app.setLanguage(i)" [value]="i">
+        @for (lang of appService.langList; track lang; let i = $index) {
+          <button mat-menu-item (click)="appService.setLanguage(i)" [value]="i">
             <mat-radio-button [checked]="lang === translate.currentLang" [value]="i">{{ 'LANGUAGES.' + (lang | uppercase) | translate }}</mat-radio-button>
           </button>
         }
       </mat-radio-group>
     </mat-menu>
 
-    <button mat-icon-button [ngClass]="{ 'hide': searchMode, 'menu-button-hide': !app.isLoggedIn}" aria-label="Menu" [matMenuTriggerFor]="appMenu">
-      <mat-icon [class.scale-150]="app.isLoggedIn">{{ app.isLoggedIn ? 'person' : 'more_vert' }}</mat-icon>
+    <button mat-icon-button [ngClass]="{ 'hide': searchMode, 'menu-button-hide': !isLoggedIn()}" aria-label="Menu" [matMenuTriggerFor]="appMenu">
+      <mat-icon [class.scale-150]="isLoggedIn()">{{ isLoggedIn() ? 'person' : 'more_vert' }}</mat-icon>
     </button>
   </div>
 </mat-toolbar>

@@ -3,25 +3,22 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { AuthData } from 'src/app/interfaces/http.interfaces';
 import { User } from 'src/app/interfaces/app.interfaces';
-import { Observable, Subscription, Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../components/confirm-dialog/confirm-dialog.component';
 import { AuthService } from './auth.service';
 
-
 @Injectable({
   providedIn: 'root',
 })
 export class AppService {
-  private loginState = false;
-  public user: User = { name: '', login: '', _id: '' };
-  public readonly langList = ['en', 'ua'];
-  public userData$ = new Subject<User>();
-  public createBoard$ = new Subject<void>();
-  public createColumn$ = new Subject<void>();
-  public showTask$ = new Subject<{ columnId: string, taskId: string }>();
+  readonly langList = ['en', 'ua'];
+
+  createBoard$ = new Subject<void>();
+  createColumn$ = new Subject<void>();
+  showTask$ = new Subject<{ columnId: string, taskId: string }>();
 
   constructor(
     private router: Router,
@@ -31,8 +28,8 @@ export class AppService {
     private dialog: MatDialog
   ) {
     const lang = localStorage.getItem('lang');
-    lang !== null ? this.setLanguage(+lang) : this.setLanguage(0);
-    this.updateUserData();
+    this.setLanguage(lang ? +lang : 0);
+    this.authService.initUser();
   }
 
   showTask(columnId: string, taskId: string): void {
@@ -49,78 +46,27 @@ export class AppService {
 
   processError(error: Error): void {
     if (error.cause === 'TOKEN') {
-      this.logout('/');
+      this.authService.logout();
     }
     this.showErrorMessage(error);
-  }
-
-  updateUserData(userData?: User): void {
-    if (userData) {
-      this.userData$.next(userData);
-      return;
-    }
-    const token = this.authService.loadTokenFromStorage();
-    const id = localStorage.getItem('id');
-    if (!token || !id) {
-      this.logout('/');
-      return;
-    }
-    this.loginState = true;
-    this.user._id = id;
-    this.authService.getUser(id).subscribe({
-      next: (user) => {
-        this.user = user;
-        this.userData$.next(user);
-      },
-      error: this.processError.bind(this)
-    });
-  }
-
-  get isLoggedIn(): boolean {
-    return this.loginState;
-  }
-
-  set isLoggedIn(value: boolean) {
-    this.loginState = value;
   }
 
   gotoPage(url: string): void {
     this.router.navigate([url]);
   }
 
-  logout(gotoUrl?: string): void {
-    this.isLoggedIn = false;
-    this.user._id = '';
-    localStorage.removeItem('id');
-    this.authService.logout();
-    if (gotoUrl) {
-      this.gotoPage(gotoUrl);
-    }
-  }
-
-  login(data: AuthData): Observable<void> {
+  login(data: AuthData): Observable<User> {
     return this.authService.login(data)
       .pipe(
-        map(() => {
-          const subscription: Subscription = this.userData$.subscribe({
-            next: () => {
-              this.gotoPage('/boards');
-              subscription.unsubscribe();
-            },
-          });
-          this.updateUserData();
-          this.isLoggedIn = true;
-        })
-      )
+        tap(() => this.gotoPage('/boards'))
+      );
   }
 
   deleteAccount(): Observable<void> {
-    return this.authService.deleteAccount(this.user._id)
+    return this.authService.deleteAccount(this.authService.user()!._id)
       .pipe(
-        map(() => {
-          this.logout('/');
-        })
-      )
+        map(() => this.authService.logout())
+      );
   }
 
   setLanguage(index: number): void {
@@ -141,13 +87,13 @@ export class AppService {
   }
 
   showSnackBar(text: string, buttonCaption: string): void {
-    this.snackBar.open(text, buttonCaption, { verticalPosition: 'top', horizontalPosition: 'center', panelClass: 'snack-bar' })
+    this.snackBar.open(text, buttonCaption, { verticalPosition: 'top', horizontalPosition: 'center', panelClass: 'snack-bar' });
   }
 
   showMessage(text: string, buttonCaption = 'DIALOG_BUTTONS.CLOSE'): void {
     this.translate.get([text, buttonCaption]).subscribe({
       next: (result) => this.showSnackBar(result[text], result[buttonCaption])
-    })
+    });
   }
 
   showErrorMessage(error: Error, buttonCaption = 'DIALOG_BUTTONS.CLOSE'): void {
@@ -157,7 +103,7 @@ export class AppService {
         const text = result[errorPath] !== errorPath ? result[errorPath] : error.message;
         this.showSnackBar(text, result[buttonCaption]);
       }
-    })
+    });
   }
 
   showConfirmDialog(text: string, title = ''): Observable<boolean> {

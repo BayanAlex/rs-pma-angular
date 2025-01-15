@@ -15,7 +15,7 @@ export class SignUpPageComponent {
   @Output() pendingRequest = false;
 
   constructor(
-    public app: AppService,
+    public appService: AppService,
     private authService: AuthService,
   ) { }
 
@@ -25,7 +25,7 @@ export class SignUpPageComponent {
     .pipe(
       mergeMap(() => {
         delete data.name;
-        return this.app.login(data);
+        return this.appService.login(data);
       })
     )
     .subscribe({

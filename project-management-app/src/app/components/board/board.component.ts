@@ -14,10 +14,10 @@ export class BoardComponent {
   readonly deleteBoard = output<string>();
   readonly editBoard = output<string>();
 
-  constructor(private app: AppService) {}
+  constructor(private appService: AppService) {}
 
   deleteClick(event: Event): void {
-    this.app.showConfirmDialog('BOARDS_PAGE.DELETE_DIALOG.TEXT', 'BOARDS_PAGE.DELETE_DIALOG.CAPTION').subscribe({
+    this.appService.showConfirmDialog('BOARDS_PAGE.DELETE_DIALOG.TEXT', 'BOARDS_PAGE.DELETE_DIALOG.CAPTION').subscribe({
       next: (confirm) => {
         if (confirm) {
           this.deleteBoard.emit(this.id()!);

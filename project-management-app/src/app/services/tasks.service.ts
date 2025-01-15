@@ -11,25 +11,9 @@ export class TasksService {
   constructor(
     private httpService: HttpService,
   ) { }
-  
-  createCheckList(checkList: CheckList): Observable<CheckList> {
-    return forkJoin(checkList.map((item: CheckItem) => {
-        delete item._id;
-        return this.httpService.post<CheckItem>('points', item, 'POINT');
-      })
-    );
-  }
 
-  getCheckList(taskId :string): Observable<CheckList> {
-    return this.httpService.get<CheckList>(`points/${taskId}`, 'POINT');
-  }
-
-  editCheckItem(id: string, title: string, done: boolean): Observable<CheckItem> {
-    return this.httpService.patch<CheckItem>(`points/${id}`, { title, done }, 'POINT');
-  }
-
-  deleteCheckItem(id: string): Observable<void> {
-    return this.httpService.delete(`points/${id}`, 'POINT');
+  getTasks(boardId :string): Observable<Task[]> {
+    return this.httpService.get<Task[]>(`tasksSet/${boardId}`, 'TASK');
   }
 
   searchTask(searchValue: string, userId: string): Observable<Task[]> {
@@ -38,10 +22,6 @@ export class TasksService {
       .pipe(
         map((tasks: Task[]) => tasks.filter((task: Task) => task.userId === userId))
       );
-  }
-
-  getTasks(boardId :string): Observable<Task[]> {
-    return this.httpService.get<Task[]>(`tasksSet/${boardId}`, 'TASK');
   }
 
   updateTasksOrder(tasks: Task[]): Observable<Task[]> {
@@ -87,5 +67,25 @@ export class TasksService {
           return this.httpService.delete(`boards/${boardId}/columns/${columnId}/tasks/${taskId}`, 'TASK');
         })
     );
+  }
+
+  getCheckList(taskId :string): Observable<CheckList> {
+    return this.httpService.get<CheckList>(`points/${taskId}`, 'POINT');
+  }
+
+  createCheckList(checkList: CheckList): Observable<CheckList> {
+    return forkJoin(checkList.map((item: CheckItem) => {
+        delete item._id;
+        return this.httpService.post<CheckItem>('points', item, 'POINT');
+      })
+    );
+  }
+
+  editCheckItem(id: string, title: string, done: boolean): Observable<CheckItem> {
+    return this.httpService.patch<CheckItem>(`points/${id}`, { title, done }, 'POINT');
+  }
+
+  deleteCheckItem(id: string): Observable<void> {
+    return this.httpService.delete(`points/${id}`, 'POINT');
   }
 }

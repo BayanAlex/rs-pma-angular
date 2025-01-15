@@ -16,11 +16,11 @@ import { ColumnsService } from './services/columns.service';
 
 const resolveBoards: ResolveFn<Board[]> = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
   const boardsService = inject(BoardsService);
-  const app = inject(AppService);
+  const appService = inject(AppService);
   return boardsService.getBoards().pipe(
     catchError((error, caught) => {
-      app.processError(error);
-      app.gotoPage('/');
+      appService.processError(error);
+      appService.gotoPage('/');
       return caught;
     })
   );
@@ -28,13 +28,13 @@ const resolveBoards: ResolveFn<Board[]> = (route: ActivatedRouteSnapshot, state:
 
 const resolveColumns: ResolveFn<TasksPageData> = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
   const columnsService = inject(ColumnsService);
-  const app = inject(AppService);
+  const appService = inject(AppService);
   const boardId = route.url[route.url.length - 1].path;
   return columnsService
     .getColumns(boardId).pipe(
       catchError((error, caught) => {
-        app.processError(error);
-        app.gotoPage('/');
+        appService.processError(error);
+        appService.gotoPage('/');
         return caught;
       })
     );

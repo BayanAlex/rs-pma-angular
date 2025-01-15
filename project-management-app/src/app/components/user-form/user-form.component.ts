@@ -1,9 +1,9 @@
-import { Component, OnInit, input, output } from '@angular/core';
+import { Component, OnInit, effect, input, output } from '@angular/core';
 import { FormControl, FormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { AuthData } from 'src/app/interfaces/http.interfaces';
 import { InputsSettings, InputError } from 'src/app/interfaces/app.interfaces';
-import { AppService } from 'src/app/services/app.service';
 import { Subscription } from 'rxjs'
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-user-form',
@@ -23,7 +23,16 @@ export class UserFormComponent implements OnInit {
   hideDeleteUserButton = true;
   userDataSubscription: Subscription;
 
-  constructor(private app: AppService) {}
+  constructor(
+    private authService: AuthService
+  ) {
+    effect(() => {
+      if (this.authService.user() && this.type() === 'profile') {
+        this.form.controls['login'].setValue(this.authService.user()!.login);
+        this.form.controls['username'].setValue(this.authService.user()!.name);
+      }
+    });
+  }
 
   togglePassword(inputName: string): void {
     if (inputName === 'password') {
@@ -81,19 +90,6 @@ export class UserFormComponent implements OnInit {
         [Validators.required, this.passwordsMatchValidator()]
       ),
     });
-
-    if (this.type() === 'profile') {
-      this.userDataSubscription = this.app.userData$.subscribe({
-        next: (user) => {
-          this.form.controls['login'].setValue(user.login);
-          this.form.controls['username'].setValue(user.name);
-        },
-        error: (error) => {
-          this.app.showErrorMessage(error);
-        }
-      });
-      this.app.updateUserData();
-    }
   }
 
   allowedSymbolsValidator(): ValidatorFn {

@@ -14,15 +14,15 @@ export class ProfilePageComponent {
   @Output() pendingRequest = false;
 
   constructor(
-    private app: AppService,
+    private appService: AppService,
     private authService: AuthService,
   ) { }
 
   deleteAccount(): void {
-    this.app.showConfirmDialog('PROFILE_PAGE.DELETE_CONFIRM_TEXT', 'PROFILE_PAGE.DELETE_CONFIRM_TITLE').subscribe((confirm) => {
+    this.appService.showConfirmDialog('PROFILE_PAGE.DELETE_CONFIRM_TEXT', 'PROFILE_PAGE.DELETE_CONFIRM_TITLE').subscribe((confirm) => {
       if (confirm) {
         this.pendingRequest = true;
-        this.app.deleteAccount().subscribe({
+        this.appService.deleteAccount().subscribe({
           next: () => this.pendingRequest = false,
           error: (error) => {
             this.pendingRequest = false;
@@ -34,12 +34,13 @@ export class ProfilePageComponent {
   }
 
   saveProfile(data: AuthData): void {
+    if (!this.authService.user())
+      return;
     this.pendingRequest = true;
-    this.authService.saveProfile(this.app.user._id, data).subscribe({
-      next: (user) => {
+    this.authService.saveProfile(this.authService.user()!._id, data).subscribe({
+      next: () => {
         this.pendingRequest = false;
-        this.app.updateUserData(user);
-        this.app.showMessage('PROFILE_PAGE.SAVED_MESSAGE');
+        this.appService.showMessage('PROFILE_PAGE.SAVED_MESSAGE');
       },
       error: (error) => {
         this.pendingRequest = false;

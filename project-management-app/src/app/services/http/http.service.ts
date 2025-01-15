@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
-import { throwError } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 type ErrorCode = 'BOARD' | 'COLUMN' | 'TASK' | 'POINT' | 'PROFILE' | 'DELETE_USER' | 'SIGNUP' | 'LOGIN' | 'GET_USER';
@@ -20,15 +20,19 @@ export class HttpService {
 
   constructor(private httpClient: HttpClient) {}
 
-  get<T extends object>(path: string, errorCode: ErrorCode, params: { [key: string]: string } = {}) {
+  get<T extends object>(
+    path: string,
+    errorCode: ErrorCode,
+    params: { [key: string]: string } = {}
+  ): Observable<T> {
     return this.httpClient
-      .get<T>(path, {...this.httpOptions, ...params})
+      .get<T>(path, {...this.httpOptions, params})
       .pipe(
         catchError((error) => throwError(() => this.convertError(error, errorCode)))
       );
   }
 
-  post<T extends object | void>(path: string, item: object, errorCode: ErrorCode) {
+  post<T extends object | void>(path: string, item: object, errorCode: ErrorCode): Observable<T> {
     return this.httpClient
       .post<T>(path, item, this.httpOptions)
       .pipe(
@@ -40,7 +44,7 @@ export class HttpService {
     path: string,
     item: T extends object[] ? Partial<T[number]>[] : Partial<T>,
     errorCode: ErrorCode
-  ) {
+  ): Observable<T> {
     return this.httpClient
       .patch<T>(path, item, this.httpOptions)
       .pipe(
@@ -48,7 +52,7 @@ export class HttpService {
       );
   }
 
-  put<T extends object>(path: string, item: Partial<T>, errorCode: ErrorCode) {
+  put<T extends object>(path: string, item: Partial<T>, errorCode: ErrorCode): Observable<T> {
     return this.httpClient
       .put<T>(path, item, this.httpOptions)
       .pipe(
@@ -56,7 +60,7 @@ export class HttpService {
       );
   }
 
-  delete(path: string, errorCode: ErrorCode) {
+  delete(path: string, errorCode: ErrorCode): Observable<void> {
     return this.httpClient
       .delete<void>(path, this.httpOptions)
       .pipe(

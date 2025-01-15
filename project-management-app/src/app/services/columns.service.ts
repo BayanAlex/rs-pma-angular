@@ -52,8 +52,7 @@ export class ColumnsService {
 
   createColumn(title: string, order: number, boardId: string): Observable<Column> {
     const column: Omit<Column, '_id' | 'boardId'> = { title, order };
-    return this.httpService
-      .post<Column>(`boards/${boardId}/columns`, column, 'COLUMN');
+    return this.httpService.post<Column>(`boards/${boardId}/columns`, column, 'COLUMN');
   }
 
   editColumn(title: string, order: number, boardId: string, columnId: string): Observable<Column> {

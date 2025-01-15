@@ -11,12 +11,12 @@ import { AppService } from 'src/app/services/app.service';
 export class LoginPageComponent {
   @Output() pendingRequest = false;
 
-  constructor(private app: AppService) { }
+  constructor(private appService: AppService) { }
 
   login(data: AuthData): void {
     delete data.name;
     this.pendingRequest = true;
-    this.app.login(data).subscribe({
+    this.appService.login(data).subscribe({
       next: () => {},
       error: (error) => {
         this.pendingRequest = false;

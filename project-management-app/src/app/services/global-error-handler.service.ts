@@ -4,9 +4,9 @@ import { AppService } from './app.service';
 @Injectable()
 export class GlobalErrorHandlerService implements ErrorHandler {
 
-  constructor(private app: AppService) { }
+  constructor(private appService: AppService) { }
 
   handleError(error: Error) {
-    this.app.processError(error);
+    this.appService.processError(error);
   }
 }

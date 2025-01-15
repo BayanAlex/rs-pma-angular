@@ -6,7 +6,7 @@ import { EditTitleDialogComponent } from '../edit-title-dialog/edit-title-dialog
 import { Observable, Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { BoardsService } from 'src/app/services/boards.service';
-
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-boards-page',
@@ -19,11 +19,12 @@ export class BoardsPageComponent implements OnInit, OnDestroy {
   createBoardSubscription: Subscription;
 
   constructor(
-    private app: AppService,
+    private appService: AppService,
+    private authService: AuthService,
     private boardsService: BoardsService,
     private route: ActivatedRoute,
     private dialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.route.data.subscribe({
@@ -32,7 +33,7 @@ export class BoardsPageComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.createBoardSubscription = this.app.createBoard$.subscribe({
+    this.createBoardSubscription = this.appService.createBoard$.subscribe({
       next: () => {
         this.createBoard();
       }
@@ -52,7 +53,7 @@ export class BoardsPageComponent implements OnInit, OnDestroy {
     this.showEditDialog('NEW_BOARD_DIALOG.TITLE', '').subscribe({
       next: (result) => {
         if (result) {
-          this.boardsService.createBoard(result, this.app.user._id).subscribe({
+          this.boardsService.createBoard(result, this.authService.user()!._id).subscribe({
             next: (board) => {
               this.boards.push(board);
             }
@@ -77,7 +78,7 @@ export class BoardsPageComponent implements OnInit, OnDestroy {
     this.showEditDialog('EDIT_BOARD_DIALOG.TITLE', title).subscribe({
       next: (newTitle) => {
         if (newTitle) {
-          this.boardsService.editBoard(id, newTitle, this.app.user._id).subscribe({
+          this.boardsService.editBoard(id, newTitle, this.authService.user()!._id).subscribe({
             next: (board) => {
               this.boards[index].title = board.title;
             }

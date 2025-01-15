@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Task } from 'src/app/interfaces/app.interfaces';
 import { AppService } from 'src/app/services/app.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { HttpService } from 'src/app/services/http/http.service';
 import { TasksService } from 'src/app/services/tasks.service';
 
@@ -18,25 +19,22 @@ export class HeaderComponent {
   searchTimer: ReturnType<typeof setTimeout>;
   searchResults: Task[] = [];
   searchFormControl = new FormControl('');
-  darkMode = false;
   readonly searchInput = viewChild<ElementRef>('searchInput');
+  isLoggedIn = this.authService.isLoggedIn;
 
   constructor (
     public translate: TranslateService,
-    public app: AppService,
+    public appService: AppService,
     public router: Router,
     public httpService: HttpService,
+    public authService: AuthService,
     private tasksService: TasksService,
   ) {}
-
-  switchMode(): void {
-    this.darkMode = !this.darkMode;
-  }
 
   searchItemSelected(index: number): void {
     const task = this.searchResults[index];
     this.router.navigate(['/boards', task.boardId]).then(() => {
-      this.app.showTask(task.columnId, task._id);
+      this.appService.showTask(task.columnId, task._id);
       this.searchResults = [];
     });
   }
@@ -49,31 +47,33 @@ export class HeaderComponent {
   }
 
   createBoard(): void {
-    this.app.createBoard();
+    this.appService.createBoard();
   }
 
   createColumn(): void {
-    this.app.createColumn();
+    this.appService.createColumn();
   }
 
   auth(): void {
-    if(this.app.isLoggedIn) {
+    if(this.authService.isLoggedIn()) {
       this.logout();
     } else {
-      this.app.openLoginPage();
+      this.appService.openLoginPage();
     }
   }
 
   logout(): void {
-    this.app.showConfirmDialog('LOGOUT.TEXT').subscribe((confirm: boolean) => {
+    this.appService.showConfirmDialog('LOGOUT.TEXT').subscribe((confirm: boolean) => {
       if (confirm) {
-        this.app.logout('/');
+        this.authService.logout();
       }
     });
   }
 
   searchTask(value: string): void {
-    this.tasksService.searchTask(value, this.app.user._id).subscribe({
+    if (!this.authService.user())
+      return;
+    this.tasksService.searchTask(value, this.authService.user()!._id).subscribe({
       next: (tasks: Task[]) => {
         this.searchResults = tasks;
       }
